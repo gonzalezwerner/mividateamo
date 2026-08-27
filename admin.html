@@ -576,9 +576,23 @@
   import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
   import { getDatabase, ref, push } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
 
-  // ─── Lee config del archivo compartido firebase-config.js ───
-  const cfg = window.FIREBASE_CONFIG;
-  const isConfigured = cfg && cfg.apiKey && !cfg.apiKey.includes('PEGA_TU');
+  // ─── Config integrada por defecto (funciona standalone) ───
+  const DEFAULT_FIREBASE_CONFIG = {
+    apiKey:            "AIzaSyCIrVDwp6h6iwtT_5QXYhfaV3fJN1u9Fig",
+    authDomain:        "teamo-62c6e.firebaseapp.com",
+    databaseURL:       "https://teamo-62c6e-default-rtdb.firebaseio.com",
+    projectId:         "teamo-62c6e",
+    storageBucket:     "teamo-62c6e.firebasestorage.app",
+    messagingSenderId: "542824571134",
+    appId:             "1:542824571134:web:c46d04665fd6dc3bd105af",
+    measurementId:     "G-TCGS86LR1E"
+  };
+
+  const sharedCfg = window.FIREBASE_CONFIG;
+  const cfg = (sharedCfg && sharedCfg.apiKey && !sharedCfg.apiKey.includes('PEGA_TU'))
+    ? sharedCfg
+    : DEFAULT_FIREBASE_CONFIG;
+  const isConfigured = Boolean(cfg && cfg.apiKey);
 
   let app = null, db = null;
 
@@ -586,11 +600,11 @@
     try {
       if (!isConfigured) throw new Error('Config no completada');
       app = getApps().find(a => a.name === 'admin-app') || initializeApp(cfg, 'admin-app');
-      db = getDatabase(app);
+      db = getDatabase(app, cfg.databaseURL);
       setStatus('connected', '✅ Conectado');
       return true;
     } catch (e) {
-      setStatus('error', '⚠️ Edita firebase-config.js');
+      setStatus('error', '⚠️ Error de conexión');
       console.error(e);
       return false;
     }
