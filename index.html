@@ -2649,19 +2649,33 @@
     import { getDatabase, ref, onChildAdded, query, orderByChild, limitToLast }
       from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
 
-    // ── Config ── (primero de firebase-config.js, fallback a localStorage)
+    // ── Config por defecto integrada (funciona sin necesidad de enviar archivos extra) ──
+    const DEFAULT_FIREBASE_CONFIG = {
+      apiKey:            "AIzaSyCIrVDwp6h6iwtT_5QXYhfaV3fJN1u9Fig",
+      authDomain:        "teamo-62c6e.firebaseapp.com",
+      databaseURL:       "https://teamo-62c6e-default-rtdb.firebaseio.com",
+      projectId:         "teamo-62c6e",
+      storageBucket:     "teamo-62c6e.firebasestorage.app",
+      messagingSenderId: "542824571134",
+      appId:             "1:542824571134:web:c46d04665fd6dc3bd105af",
+      measurementId:     "G-TCGS86LR1E"
+    };
+
     function loadConfig() {
       const shared = window.FIREBASE_CONFIG;
       if (shared && shared.apiKey && !shared.apiKey.includes('PEGA_TU')) {
         return shared;
       }
-      try { return JSON.parse(localStorage.getItem('adminFirebaseCfg') || 'null'); }
-      catch { return null; }
+      try {
+        const local = JSON.parse(localStorage.getItem('adminFirebaseCfg') || 'null');
+        if (local && local.apiKey) return local;
+      } catch { }
+      return DEFAULT_FIREBASE_CONFIG;
     }
 
     const cfg = loadConfig();
     if (!cfg || !cfg.apiKey || !cfg.databaseURL) {
-      console.info('[LoveMsg] Sin config Firebase — edita firebase-config.js para activar mensajes en tiempo real.');
+      console.info('[LoveMsg] Sin config Firebase.');
     } else {
       // Evitar duplicar app si la página se recarga
       const app = getApps().find(a => a.name === 'love-msg') ||
