@@ -2680,7 +2680,7 @@
       // Evitar duplicar app si la página se recarga
       const app = getApps().find(a => a.name === 'love-msg') ||
                   initializeApp(cfg, 'love-msg');
-      const db = getDatabase(app);
+      const db = getDatabase(app, cfg.databaseURL);
 
       // Solo escuchar mensajes NUEVOS (no los históricos)
       let firstLoad = true;
