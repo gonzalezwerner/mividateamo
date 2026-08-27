@@ -227,6 +227,7 @@ body::after{content:'';position:fixed;inset:0;
     <button class="btn" id="btnRot" title="Rotar pieza">🔄</button>
     <button class="btn" id="btnMix" title="Revolver">🔀</button>
     <button class="btn" id="btnSave" title="Guardar progreso" style="color:#86efac;border-color:rgba(134,239,172,.5)">💾</button>
+
   </div>
 </div>
 
@@ -1349,7 +1350,7 @@ document.getElementById('btnRot').onclick=()=>{if(sel&&!sel.userData.placed){sel
   else if(isMobile)showToast('Selecciona una pieza primero',1200)};
 document.getElementById('btnMix').onclick=()=>{pieces.forEach(p=>{if(!p.userData.placed){const a=Math.random()*Math.PI*2,d=PZW*.5+Math.random()*PZW*.6;
   p.position.set(Math.cos(a)*d,Math.sin(a)*d,0);p.rotation.z=[0,Math.PI/2,Math.PI,Math.PI*1.5][Math.random()*4|0]}})};
-document.getElementById('btnDemo').onclick=runAutoDemo;
+
 document.getElementById('btnSave').onclick=saveProgress;
 document.getElementById('btnReplay').onclick=()=>{localStorage.removeItem(SAVE_KEY);location.reload();};
 
