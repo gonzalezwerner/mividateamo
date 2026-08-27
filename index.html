@@ -746,12 +746,392 @@
         padding: 5px 7px
       }
     }
+
+    /* ═══════════════════ LOVE MESSAGE OVERLAY ═══════════════════ */
+    #loveMessageOverlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 150;
+      overflow: hidden;
+    }
+
+    /* Main card */
+    .lm-card {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) scale(0.4);
+      width: min(90vw, 480px);
+      padding: 0;
+      border-radius: 28px;
+      pointer-events: auto;
+      opacity: 0;
+      transition: none;
+      will-change: transform, opacity;
+      z-index: 151;
+    }
+
+    .lm-card.lm-entering {
+      animation: lmCardIn .65s cubic-bezier(.175, .885, .32, 1.275) forwards;
+    }
+
+    .lm-card.lm-leaving {
+      animation: lmCardOut .5s cubic-bezier(.55, 0, 1, .45) forwards;
+    }
+
+    @keyframes lmCardIn {
+      0%   { opacity:0; transform: translate(-50%,-50%) scale(0.3) rotate(-6deg); }
+      60%  { opacity:1; transform: translate(-50%,-50%) scale(1.06) rotate(1.5deg); }
+      80%  { transform: translate(-50%,-50%) scale(0.97) rotate(-0.5deg); }
+      100% { opacity:1; transform: translate(-50%,-50%) scale(1) rotate(0deg); }
+    }
+
+    @keyframes lmCardOut {
+      0%   { opacity:1; transform: translate(-50%,-50%) scale(1); }
+      100% { opacity:0; transform: translate(-50%,-50%) scale(0.7) translateY(-30px); }
+    }
+
+    /* Card inner */
+    .lm-inner {
+      position: relative;
+      border-radius: 28px;
+      overflow: hidden;
+      border: 1px solid rgba(255,200,160,.25);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      background: rgba(12,8,18,.82);
+      box-shadow:
+        0 0 0 1px rgba(255,180,140,.12),
+        0 8px 60px rgba(0,0,0,.7),
+        inset 0 1px 0 rgba(255,255,255,.08);
+    }
+
+    /* Animated gradient border */
+    .lm-border-anim {
+      position: absolute;
+      inset: -2px;
+      border-radius: 30px;
+      z-index: -1;
+      background: conic-gradient(from var(--lm-angle,0deg),
+        #f97316, #fb7185, #f472b6, #a78bfa, #60a5fa, #34d399, #fbbf24, #f97316);
+      animation: lmBorderSpin 3s linear infinite;
+    }
+
+    @property --lm-angle {
+      syntax: '<angle>';
+      initial-value: 0deg;
+      inherits: false;
+    }
+
+    @keyframes lmBorderSpin {
+      to { --lm-angle: 360deg; }
+    }
+
+    /* Content */
+    .lm-content {
+      padding: 28px 28px 22px;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .lm-icon {
+      font-size: 3.2em;
+      display: block;
+      margin-bottom: 10px;
+      animation: lmIconPulse 1.4s ease-in-out infinite;
+      filter: drop-shadow(0 0 20px rgba(251,113,133,.7));
+    }
+
+    @keyframes lmIconPulse {
+      0%,100% { transform: scale(1) rotate(-3deg); }
+      50%      { transform: scale(1.18) rotate(3deg); }
+    }
+
+    .lm-from {
+      font-size: .68em;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: rgba(255,200,160,.65);
+      margin-bottom: 10px;
+    }
+
+    .lm-text {
+      font-size: clamp(1em, 3.5vw, 1.35em);
+      font-weight: 600;
+      line-height: 1.6;
+      color: #ffedd5;
+      text-shadow: 0 1px 8px rgba(0,0,0,.4);
+      margin: 0 0 18px;
+    }
+
+    .lm-close {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 22px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,180,140,.3);
+      background: rgba(255,180,140,.1);
+      color: rgba(255,220,190,.8);
+      font-family: inherit;
+      font-size: .8em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .lm-close:hover {
+      background: rgba(255,180,140,.22);
+      border-color: rgba(255,180,140,.5);
+    }
+
+    /* Floating emoji particles around the card */
+    .lm-particle {
+      position: fixed;
+      pointer-events: none;
+      z-index: 152;
+      font-size: 1.6em;
+      opacity: 0;
+      animation: lmParticleFloat var(--dur, 2s) ease-out var(--delay, 0s) forwards;
+    }
+
+    @keyframes lmParticleFloat {
+      0%   { opacity:0;   transform: translate(0, 0) scale(0.3) rotate(var(--rot0,0deg)); }
+      15%  { opacity:0.95; }
+      80%  { opacity:0.7;  transform: translate(var(--tx,0px), var(--ty,-120px)) scale(1.1) rotate(var(--rot1,180deg)); }
+      100% { opacity:0;   transform: translate(var(--tx2,10px), var(--ty2,-180px)) scale(0.5) rotate(var(--rot2,360deg)); }
+    }
+
+    /* Background shimmer for different effects */
+    .lm-bg-shimmer {
+      position: absolute;
+      inset: 0;
+      border-radius: 28px;
+      opacity: 0.12;
+      pointer-events: none;
+    }
+
+    /* Effect color themes + shimmer */
+    .lm-effect-hearts    .lm-bg-shimmer { background: radial-gradient(ellipse, #e11d48 0%, transparent 70%); }
+    .lm-effect-sparkle   .lm-bg-shimmer { background: radial-gradient(ellipse, #fbbf24 0%, transparent 70%); }
+    .lm-effect-roses     .lm-bg-shimmer { background: radial-gradient(ellipse, #fb7185 0%, transparent 70%); }
+    .lm-effect-stars     .lm-bg-shimmer { background: radial-gradient(ellipse, #a78bfa 0%, transparent 70%); }
+    .lm-effect-rainbow   .lm-bg-shimmer { background: conic-gradient(from 0deg, #f97316,#fb7185,#a78bfa,#60a5fa,#34d399,#fbbf24,#f97316); }
+    .lm-effect-firework  .lm-bg-shimmer { background: radial-gradient(ellipse, #f97316 0%, transparent 70%); }
+    .lm-effect-butterflies .lm-bg-shimmer { background: radial-gradient(ellipse, #a78bfa 0%, #34d399 60%, transparent 70%); }
+    .lm-effect-diamonds  .lm-bg-shimmer { background: radial-gradient(ellipse, #e0f2fe 0%, #7dd3fc 40%, transparent 70%); }
+    .lm-effect-waves     .lm-bg-shimmer { background: radial-gradient(ellipse, #0ea5e9 0%, transparent 70%); }
+    .lm-effect-snow      .lm-bg-shimmer { background: radial-gradient(ellipse, #bfdbfe 0%, transparent 70%); }
+    .lm-effect-night     .lm-bg-shimmer { background: radial-gradient(ellipse, #1e1b4b 0%, #4338ca 50%, transparent 70%); }
+    .lm-effect-fire      .lm-bg-shimmer { background: radial-gradient(ellipse, #dc2626 0%, #f97316 50%, transparent 70%); }
+    .lm-effect-petals    .lm-bg-shimmer { background: radial-gradient(ellipse, #f9a8d4 0%, #fb7185 50%, transparent 70%); }
+    .lm-effect-aurora    .lm-bg-shimmer { background: conic-gradient(from 45deg, #06b6d4, #10b981, #8b5cf6, #ec4899, #06b6d4); }
+    .lm-effect-golden    .lm-bg-shimmer { background: radial-gradient(ellipse, #fef08a 0%, #f59e0b 60%, #b45309 100%); }
+
+    /* ── Per-effect card entrance animations ── */
+    .lm-effect-hearts.lm-entering    { animation: lmCardIn      .65s cubic-bezier(.175,.885,.32,1.275) forwards; }
+    .lm-effect-sparkle.lm-entering   { animation: lmCardFlash   .6s  cubic-bezier(.175,.885,.32,1.275) forwards; }
+    .lm-effect-roses.lm-entering     { animation: lmCardRise    .7s  cubic-bezier(.175,.885,.32,1.275) forwards; }
+    .lm-effect-stars.lm-entering     { animation: lmCardSpin    .65s cubic-bezier(.175,.885,.32,1.275) forwards; }
+    .lm-effect-rainbow.lm-entering   { animation: lmCardIn      .65s cubic-bezier(.175,.885,.32,1.275) forwards; }
+    .lm-effect-firework.lm-entering  { animation: lmCardBoom    .55s cubic-bezier(.175,.885,.32,1.275) forwards; }
+    .lm-effect-butterflies.lm-entering { animation: lmCardWave  .75s cubic-bezier(.175,.885,.32,1.275) forwards; }
+    .lm-effect-diamonds.lm-entering  { animation: lmCardSpin    .7s  cubic-bezier(.175,.885,.32,1.275) forwards; }
+    .lm-effect-waves.lm-entering     { animation: lmCardWave    .7s  cubic-bezier(.175,.885,.32,1.275) forwards; }
+    .lm-effect-snow.lm-entering      { animation: lmCardRise    .8s  cubic-bezier(.175,.885,.32,1.275) forwards; }
+    .lm-effect-night.lm-entering     { animation: lmCardFlash   .75s cubic-bezier(.175,.885,.32,1.275) forwards; }
+    .lm-effect-fire.lm-entering      { animation: lmCardBoom    .5s  cubic-bezier(.175,.885,.32,1.275) forwards; }
+    .lm-effect-petals.lm-entering    { animation: lmCardRise    .7s  cubic-bezier(.175,.885,.32,1.275) forwards; }
+    .lm-effect-aurora.lm-entering    { animation: lmCardAurora  .75s cubic-bezier(.175,.885,.32,1.275) forwards; }
+    .lm-effect-golden.lm-entering    { animation: lmCardGolden  .7s  cubic-bezier(.175,.885,.32,1.275) forwards; }
+
+    @keyframes lmCardAurora {
+      0%   { opacity:0; transform: translate(-50%,-50%) scale(0.3) rotate(-12deg); filter: drop-shadow(0 0 0 transparent); }
+      50%  { opacity:1; transform: translate(-50%,-50%) scale(1.08) rotate(2deg); filter: drop-shadow(0 0 35px #06b6d4); }
+      75%  { transform: translate(-50%,-50%) scale(0.97) rotate(-1deg); filter: drop-shadow(0 0 25px #8b5cf6); }
+      100% { opacity:1; transform: translate(-50%,-50%) scale(1) rotate(0deg); filter: drop-shadow(0 0 15px #10b981); }
+    }
+    @keyframes lmCardGolden {
+      0%   { opacity:0; transform: translate(-50%,-50%) scale(0.1); filter: drop-shadow(0 0 0 transparent); }
+      60%  { opacity:1; transform: translate(-50%,-50%) scale(1.15); filter: drop-shadow(0 0 50px #fbbf24); }
+      80%  { transform: translate(-50%,-50%) scale(0.96); filter: drop-shadow(0 0 30px #f59e0b); }
+      100% { opacity:1; transform: translate(-50%,-50%) scale(1); filter: drop-shadow(0 0 20px #fbbf24); }
+    }
+
+    @keyframes lmCardFlash {
+      0%   { opacity:0; transform: translate(-50%,-50%) scale(1.6); }
+      40%  { opacity:1; transform: translate(-50%,-50%) scale(0.95); }
+      70%  { transform: translate(-50%,-50%) scale(1.03); }
+      100% { opacity:1; transform: translate(-50%,-50%) scale(1); }
+    }
+    @keyframes lmCardRise {
+      0%   { opacity:0; transform: translate(-50%,20%) scale(0.6); }
+      60%  { opacity:1; transform: translate(-50%,-52%) scale(1.04); }
+      100% { opacity:1; transform: translate(-50%,-50%) scale(1); }
+    }
+    @keyframes lmCardSpin {
+      0%   { opacity:0; transform: translate(-50%,-50%) scale(0.2) rotate(-180deg); }
+      70%  { opacity:1; transform: translate(-50%,-50%) scale(1.05) rotate(5deg); }
+      100% { opacity:1; transform: translate(-50%,-50%) scale(1) rotate(0deg); }
+    }
+    @keyframes lmCardBoom {
+      0%   { opacity:0; transform: translate(-50%,-50%) scale(0.01); }
+      55%  { opacity:1; transform: translate(-50%,-50%) scale(1.12); }
+      80%  { transform: translate(-50%,-50%) scale(0.95); }
+      100% { opacity:1; transform: translate(-50%,-50%) scale(1); }
+    }
+    @keyframes lmCardWave {
+      0%   { opacity:0; transform: translate(-50%,-50%) scale(0.4) skewX(-8deg); }
+      40%  { opacity:1; transform: translate(-50%,-50%) scale(1.04) skewX(3deg); }
+      70%  { transform: translate(-50%,-50%) scale(0.98) skewX(-1deg); }
+      100% { opacity:1; transform: translate(-50%,-50%) scale(1) skewX(0); }
+    }
+
+    /* ── Per-effect particle animations ── */
+    /* Default / hearts / sparkle / stars / rainbow */
+    .lm-p-hearts, .lm-p-sparkle, .lm-p-stars, .lm-p-rainbow, .lm-p-firework {
+      animation: lmParticleFloat var(--dur,2s) ease-out var(--delay,0s) forwards;
+    }
+    @keyframes lmParticleFloat {
+      0%   { opacity:0;   transform:translate(0,0) scale(.3) rotate(var(--rot0,0deg)); }
+      15%  { opacity:.95; }
+      80%  { opacity:.7;  transform:translate(var(--tx,0px),var(--ty,-120px)) scale(1.1) rotate(var(--rot1,180deg)); }
+      100% { opacity:0;   transform:translate(var(--tx2,10px),var(--ty2,-180px)) scale(.5) rotate(var(--rot2,360deg)); }
+    }
+
+    /* Roses — float gently upward */
+    .lm-p-roses {
+      animation: lmParticleRoses var(--dur,2.5s) ease-out var(--delay,0s) forwards;
+    }
+    @keyframes lmParticleRoses {
+      0%   { opacity:0; transform:translate(0,0) scale(.4) rotate(var(--rot0,0deg)); }
+      20%  { opacity:1; }
+      60%  { transform:translate(var(--tx,0px),var(--ty,-100px)) scale(1) rotate(var(--rot1,45deg)); }
+      100% { opacity:0; transform:translate(var(--tx2,5px),var(--ty2,-200px)) scale(.3) rotate(var(--rot2,80deg)); }
+    }
+
+    /* Butterflies — wavy flutter path */
+    .lm-p-butterflies {
+      animation: lmParticleButterfly var(--dur,2.8s) ease-in-out var(--delay,0s) forwards;
+    }
+    @keyframes lmParticleButterfly {
+      0%   { opacity:0;  transform:translate(0,0) scale(.3) rotate(var(--rot0,0deg)); }
+      15%  { opacity:1; }
+      30%  { transform:translate(calc(var(--tx)*.4),calc(var(--ty)*.3)) scale(1.1) rotate(var(--rot1,30deg)); }
+      55%  { transform:translate(calc(var(--tx)*.7 + var(--wav,30px)),calc(var(--ty)*.65)) scale(1) rotate(calc(var(--rot1,30deg) * -1)); }
+      80%  { opacity:.7; transform:translate(var(--tx),calc(var(--ty) + var(--wav2,-20px))) scale(1.05) rotate(var(--rot2,60deg)); }
+      100% { opacity:0; transform:translate(var(--tx2),var(--ty2)) scale(.3) rotate(calc(var(--rot2,60deg) + 90deg)); }
+    }
+
+    /* Diamonds — spin and zoom spiral */
+    .lm-p-diamonds {
+      animation: lmParticleDiamond var(--dur,2s) cubic-bezier(.4,0,.2,1) var(--delay,0s) forwards;
+    }
+    @keyframes lmParticleDiamond {
+      0%   { opacity:0; transform:translate(0,0) scale(0) rotate(0deg); }
+      25%  { opacity:1; transform:translate(calc(var(--tx)*.3),calc(var(--ty)*.3)) scale(1.3) rotate(180deg); }
+      60%  { transform:translate(calc(var(--tx)*.8),calc(var(--ty)*.8)) scale(.9) rotate(360deg); }
+      80%  { opacity:.8; transform:translate(var(--tx),var(--ty)) scale(1.1) rotate(540deg); }
+      100% { opacity:0; transform:translate(var(--tx2),var(--ty2)) scale(.2) rotate(720deg); }
+    }
+
+    /* Waves — sinusoidal left-right oscillation */
+    .lm-p-waves {
+      animation: lmParticleWave var(--dur,2.4s) ease-in-out var(--delay,0s) forwards;
+    }
+    @keyframes lmParticleWave {
+      0%   { opacity:0; transform:translate(0,0) scale(.3); }
+      15%  { opacity:1; }
+      25%  { transform:translate(calc(var(--tx)*.25 + 40px),calc(var(--ty)*.2)) scale(1.05); }
+      50%  { transform:translate(calc(var(--tx)*.5 - 30px),calc(var(--ty)*.5)) scale(1); }
+      75%  { transform:translate(calc(var(--tx)*.75 + 25px),calc(var(--ty)*.75)) scale(1.05); }
+      100% { opacity:0; transform:translate(var(--tx2),var(--ty2)) scale(.4); }
+    }
+
+    /* Snow — gentle slow drift downward */
+    .lm-p-snow {
+      animation: lmParticleSnow var(--dur,3.5s) linear var(--delay,0s) forwards;
+    }
+    @keyframes lmParticleSnow {
+      0%   { opacity:0; transform:translate(0,calc(var(--ty) * -1.5)) scale(.5) rotate(0deg); }
+      10%  { opacity:.9; }
+      50%  { transform:translate(calc(var(--tx)*.4),calc(var(--ty)*.2)) scale(1) rotate(180deg); }
+      80%  { opacity:.7; transform:translate(var(--tx),var(--ty)) scale(.9) rotate(340deg); }
+      100% { opacity:0; transform:translate(var(--tx2),calc(var(--ty2) + 80px)) scale(.5) rotate(540deg); }
+    }
+
+    /* Night — pulse in place, slow rise */
+    .lm-p-night {
+      animation: lmParticleNight var(--dur,3s) ease-out var(--delay,0s) forwards;
+    }
+    @keyframes lmParticleNight {
+      0%   { opacity:0; transform:translate(var(--tx),var(--ty)) scale(0); }
+      20%  { opacity:1; transform:translate(var(--tx),var(--ty)) scale(1.4); }
+      40%  { transform:translate(var(--tx),var(--ty)) scale(.8); }
+      60%  { opacity:.9; transform:translate(var(--tx),calc(var(--ty) - 30px)) scale(1.1); }
+      80%  { opacity:.6; transform:translate(var(--tx2),calc(var(--ty2) - 20px)) scale(.9); }
+      100% { opacity:0; transform:translate(var(--tx2),calc(var(--ty2) - 60px)) scale(.4); }
+    }
+
+    /* Fire — shoot upward fast with shrink */
+    .lm-p-fire {
+      animation: lmParticleFire var(--dur,1.8s) ease-in var(--delay,0s) forwards;
+    }
+    @keyframes lmParticleFire {
+      0%   { opacity:0; transform:translate(0,0) scale(.3) rotate(var(--rot0,0deg)); }
+      10%  { opacity:1; transform:translate(calc(var(--tx)*.1),calc(var(--ty)*.1)) scale(1.2); }
+      40%  { opacity:.9; transform:translate(calc(var(--tx)*.5),calc(var(--ty)*.5 - 40px)) scale(1) rotate(var(--rot1,60deg)); }
+      70%  { opacity:.5; transform:translate(var(--tx),calc(var(--ty) - 80px)) scale(.7) rotate(var(--rot2,120deg)); }
+      100% { opacity:0; transform:translate(var(--tx2),calc(var(--ty2) - 140px)) scale(0) rotate(180deg); }
+    }
+
+    /* Petals — diagonal drifting fall */
+    .lm-p-petals {
+      animation: lmParticlePetal var(--dur,3s) ease-out var(--delay,0s) forwards;
+    }
+    @keyframes lmParticlePetal {
+      0%   { opacity:0; transform:translate(calc(var(--tx)*-.5),calc(var(--ty) * -1.2)) scale(.5) rotate(var(--rot0,0deg)); }
+      15%  { opacity:1; }
+      40%  { transform:translate(calc(var(--tx)*.2),calc(var(--ty)*.2 + 20px)) scale(1) rotate(var(--rot1,45deg)); }
+      70%  { opacity:.8; transform:translate(calc(var(--tx)*.6 + 30px),calc(var(--ty)*.6 + 50px)) scale(.95) rotate(var(--rot2,120deg)); }
+      100% { opacity:0; transform:translate(var(--tx2),calc(var(--ty2) + 100px)) scale(.3) rotate(200deg); }
+    }
+
+    /* Aurora — glowing undulating waves */
+    .lm-p-aurora {
+      animation: lmParticleAurora var(--dur,3.2s) ease-in-out var(--delay,0s) forwards;
+    }
+    @keyframes lmParticleAurora {
+      0%   { opacity:0; transform:translate(0,0) scale(.3) rotate(var(--rot0,0deg)); filter:blur(4px); }
+      20%  { opacity:1; filter:blur(0px); }
+      50%  { transform:translate(calc(var(--tx)*.6 + var(--wav,40px)),calc(var(--ty)*.5)) scale(1.3) rotate(var(--rot1,90deg)); }
+      80%  { opacity:.85; transform:translate(var(--tx),var(--ty)) scale(1.1) rotate(var(--rot2,180deg)); }
+      100% { opacity:0; transform:translate(var(--tx2),var(--ty2)) scale(.4) rotate(360deg); filter:blur(6px); }
+    }
+
+    /* Golden — solar radiation burst with glittering sparks */
+    .lm-p-golden {
+      animation: lmParticleGolden var(--dur,2.4s) cubic-bezier(.2,0,.2,1) var(--delay,0s) forwards;
+    }
+    @keyframes lmParticleGolden {
+      0%   { opacity:0; transform:translate(0,0) scale(0) rotate(0deg); text-shadow:0 0 0 transparent; }
+      15%  { opacity:1; text-shadow:0 0 20px #fef08a, 0 0 40px #f59e0b; }
+      50%  { transform:translate(calc(var(--tx)*.7),calc(var(--ty)*.7)) scale(1.4) rotate(180deg); }
+      80%  { opacity:.9; transform:translate(var(--tx),var(--ty)) scale(1.1) rotate(360deg); text-shadow:0 0 10px #fbbf24; }
+      100% { opacity:0; transform:translate(var(--tx2),var(--ty2)) scale(.2) rotate(540deg); text-shadow:none; }
+    }
   </style>
 </head>
 
 <body>
 
   <div id="flash"></div>
+
+  <!-- ── Love message overlay ── -->
+  <div id="loveMessageOverlay"></div>
 
   <div id="loading">
     <h1>💕 Rompecabezas Romántico 3D</h1>
@@ -1198,14 +1578,118 @@
       frmGlowMat.opacity = Math.min(.75, 0.2 + placedN / TOTAL * .6);
     }
 
-    // ═══════════════ LOVE WAVE SYSTEM ═══════════════
+    // ═══════════════ LOVE WAVE & SPECIAL BOARD LIGHTING SYSTEM ═══════════════
+    let specialBoardFx = null;
+
+    function triggerBoardAurora() {
+      specialBoardFx = { type: 'aurora', t0: performance.now() / 1000, dur: 4.5 };
+      emitSnapRing(0, 0, 1.8);
+      setTimeout(() => emitSnapRing(PZW * 0.25, PZH * 0.2, 1.4), 250);
+      setTimeout(() => emitSnapRing(-PZW * 0.25, -PZH * 0.2, 1.4), 500);
+      emitSnap(0, 0, 35, true);
+    }
+
+    function triggerBoardGolden() {
+      specialBoardFx = { type: 'golden', t0: performance.now() / 1000, dur: 4.0 };
+      emitSnapRing(0, 0, 2.2);
+      setTimeout(() => emitSnapRing(0, 0, 1.6), 200);
+      setTimeout(() => emitSnapRing(0, 0, 1.0), 450);
+      emitSnap(0, 0, 45, true);
+      setTimeout(() => emitSnap(0, 0, 30, false), 300);
+    }
+
+    window.triggerBoardAurora = triggerBoardAurora;
+    window.triggerBoardGolden = triggerBoardGolden;
+
     function addLoveWave(x, y, intensity) {
-      loveWaves.push({ x, y, t0: performance.now() / 1000, dur: 2.0, maxR: 20, int: intensity || 1 })
+      loveWaves.push({ x, y, t0: performance.now() / 1000, dur: 2.0, maxR: 20, int: intensity || 1 });
     }
 
     function updateWaves(now) {
+      // ── Special Board Illumination Effects (Aurora / Golden) ──
+      if (specialBoardFx) {
+        const el = now - specialBoardFx.t0;
+        if (el > specialBoardFx.dur) {
+          specialBoardFx = null;
+          ambLight.intensity = 0.95;
+          orbitL1.color.setHex(0xfb923c);
+          orbitL2.color.setHex(0xf472b6);
+          orbitL1.intensity = 1.8;
+          orbitL2.intensity = 1.5;
+        } else {
+          const prog = el / specialBoardFx.dur;
+          const fade = Math.sin(prog * Math.PI);
+
+          if (specialBoardFx.type === 'aurora') {
+            ambLight.intensity = 0.95 + fade * 0.7;
+            orbitL1.color.setHex(0x06b6d4); // neon cyan
+            orbitL2.color.setHex(0xa855f7); // neon purple
+            orbitL1.intensity = 2.4 + Math.sin(el * 4.5) * 1.0;
+            orbitL2.intensity = 2.4 + Math.cos(el * 4.5) * 1.0;
+
+            glowCtx.clearRect(0, 0, GW, GH);
+            const gx = GW * (0.1 + prog * 0.8);
+            const ag = glowCtx.createLinearGradient(gx - 70, 0, gx + 70, GH);
+            ag.addColorStop(0, 'rgba(6, 182, 212, 0)');
+            ag.addColorStop(0.3, `rgba(16, 185, 129, ${fade * 0.55})`);
+            ag.addColorStop(0.6, `rgba(168, 85, 247, ${fade * 0.6})`);
+            ag.addColorStop(0.85, `rgba(236, 72, 153, ${fade * 0.5})`);
+            ag.addColorStop(1, 'rgba(236, 72, 153, 0)');
+            glowCtx.fillStyle = ag;
+            glowCtx.fillRect(0, 0, GW, GH);
+            glowTex.needsUpdate = true;
+
+            pieces.forEach(p => {
+              if (!p.userData.placed && p !== sel) {
+                const diag = (p.position.x + p.position.y * 0.8);
+                const wavePos = (prog * 2 - 1) * (PZW + 15);
+                const dist = Math.abs(diag - wavePos);
+                if (dist < 18) {
+                  const int = (1 - dist / 18) * fade;
+                  const r = Math.sin(el * 3 + p.position.x * 0.1) * 0.2 + 0.3;
+                  const g = Math.cos(el * 3 + p.position.y * 0.1) * 0.3 + 0.4;
+                  const b = 0.65;
+                  p.material.emissive.setRGB(r * int, g * int, b * int);
+                  p.material.emissiveIntensity = int * 2.4;
+                }
+              }
+            });
+          } else if (specialBoardFx.type === 'golden') {
+            ambLight.intensity = 0.95 + fade * 0.95;
+            orbitL1.color.setHex(0xfbbf24); // warm golden
+            orbitL2.color.setHex(0xfef08a); // brilliant sun gold
+            orbitL1.intensity = 3.6 * fade;
+            orbitL2.intensity = 3.2 * fade;
+
+            glowCtx.clearRect(0, 0, GW, GH);
+            const radius = Math.max(10, (prog * 1.6) * (GW / 2));
+            const gg = glowCtx.createRadialGradient(GW / 2, GH / 2, 0, GW / 2, GH / 2, radius);
+            gg.addColorStop(0, `rgba(254, 240, 138, ${fade * 0.85})`);
+            gg.addColorStop(0.35, `rgba(251, 191, 36, ${fade * 0.7})`);
+            gg.addColorStop(0.7, `rgba(245, 158, 11, ${fade * 0.35})`);
+            gg.addColorStop(1, 'transparent');
+            glowCtx.fillStyle = gg;
+            glowCtx.fillRect(0, 0, GW, GH);
+            glowTex.needsUpdate = true;
+
+            const ringR = prog * (PZW * 0.9);
+            pieces.forEach(p => {
+              if (!p.userData.placed && p !== sel) {
+                const d = Math.sqrt(p.position.x ** 2 + p.position.y ** 2);
+                const diff = Math.abs(d - ringR);
+                if (diff < 15) {
+                  const int = (1 - diff / 15) * fade;
+                  p.material.emissive.setRGB(0.6 * int, 0.42 * int, 0.08 * int);
+                  p.material.emissiveIntensity = int * 2.9;
+                }
+              }
+            });
+          }
+        }
+      }
+
       loveWaves = loveWaves.filter(w => now - w.t0 < w.dur + .4);
-      if (!loveWaves.length && !celebActive) return;
+      if (!loveWaves.length && !celebActive && !specialBoardFx) return;
       pieces.forEach(p => {
         if (!p.userData.placed || p === sel) return;
         let maxG = 0;
@@ -1213,10 +1697,12 @@
           const el = now - w.t0; if (el > w.dur) continue;
           const dist = Math.sqrt((p.userData.tx - w.x) ** 2 + (p.userData.ty - w.y) ** 2);
           const wf = (el / w.dur) * w.maxR, ww = 4.0, d = Math.abs(dist - wf);
-          if (d < ww) { const fade = 1 - el / w.dur; maxG = Math.max(maxG, (1 - d / ww) * fade * w.int) }
+          if (d < ww) { const fade = 1 - el / w.dur; maxG = Math.max(maxG, (1 - d / ww) * fade * w.int); }
         }
-        p.material.emissive.setRGB(maxG * .25, maxG * .1, maxG * .05);
-        p.material.emissiveIntensity = maxG * 1.2;
+        if (maxG > 0) {
+          p.material.emissive.setRGB(maxG * .25, maxG * .1, maxG * .05);
+          p.material.emissiveIntensity = maxG * 1.2;
+        }
       });
     }
 
@@ -2152,6 +2638,365 @@
     });
 
     async function createpieces() { await createPieces(); }
+  </script>
+
+  <!-- Config compartida de Firebase -->
+  <script src="firebase-config.js"></script>
+
+  <!-- ═════════════════════ LOVE MESSAGES — FIREBASE ═════════════════════ -->
+  <script type="module">
+    import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+    import { getDatabase, ref, onChildAdded, query, orderByChild, limitToLast }
+      from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+
+    // ── Config ── (primero de firebase-config.js, fallback a localStorage)
+    function loadConfig() {
+      const shared = window.FIREBASE_CONFIG;
+      if (shared && shared.apiKey && !shared.apiKey.includes('PEGA_TU')) {
+        return shared;
+      }
+      try { return JSON.parse(localStorage.getItem('adminFirebaseCfg') || 'null'); }
+      catch { return null; }
+    }
+
+    const cfg = loadConfig();
+    if (!cfg || !cfg.apiKey || !cfg.databaseURL) {
+      console.info('[LoveMsg] Sin config Firebase — edita firebase-config.js para activar mensajes en tiempo real.');
+    } else {
+      // Evitar duplicar app si la página se recarga
+      const app = getApps().find(a => a.name === 'love-msg') ||
+                  initializeApp(cfg, 'love-msg');
+      const db = getDatabase(app);
+
+      // Solo escuchar mensajes NUEVOS (no los históricos)
+      let firstLoad = true;
+      let seenKeys = new Set();
+      const msgRef = query(ref(db, 'puzzle_messages'), orderByChild('timestamp'), limitToLast(1));
+
+      onChildAdded(msgRef, (snap) => {
+        // Ignorar el primer snapshot que llega al conectar (mensaje viejo)
+        if (firstLoad) { firstLoad = false; seenKeys.add(snap.key); return; }
+        if (seenKeys.has(snap.key)) return;
+        seenKeys.add(snap.key);
+
+        const data = snap.val();
+        if (data && data.text) {
+          showLoveMessage(data.text, data.effect || 'hearts');
+        }
+      });
+
+      // ── Re-escuchar con limitToLast mayor para mensajes nuevos reales ──
+      const allRef = query(ref(db, 'puzzle_messages'), orderByChild('timestamp'), limitToLast(50));
+      let initialKeys = new Set();
+      let initDone = false;
+
+      // Collect existing keys first
+      import('https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js').then(({ get }) => {
+        get(allRef).then(snap => {
+          snap.forEach(child => initialKeys.add(child.key));
+          initDone = true;
+
+          // Now listen for any NEW ones
+          onChildAdded(allRef, (snap) => {
+            if (!initDone) return;
+            if (initialKeys.has(snap.key)) return;
+            const data = snap.val();
+            if (data && data.text) showLoveMessage(data.text, data.effect || 'hearts');
+          });
+        });
+      });
+    }
+
+    // ═══════════════ MESSAGE DISPLAY ENGINE — 15 EFECTOS ═════════════
+    const EFFECT_EMOJIS = {
+      hearts:      ['❤️','💖','💕','💗','💝','💘','💓','🩷'],
+      sparkle:     ['✨','⭐','🌟','💫','🌠','⚡','💎','🔥'],
+      roses:       ['🌹','🌸','🌺','🌷','💐','🥀','🌼','🌻'],
+      stars:       ['⭐','🌟','💫','✨','🌠','🌙','☀️','🪐'],
+      rainbow:     ['🌈','🦋','🎨','💜','💙','💚','💛','💟'],
+      firework:    ['🎆','🎇','🎉','🎊','✨','🔥','💫','🎆'],
+      butterflies: ['🦋','🌸','🌺','🌼','🌷','💚','💜','🌹'],
+      diamonds:    ['💎','⭐','💠','💍','💎','✨','💙','⚪'],
+      waves:       ['🌊','💙','🪷','🐠','🐡','🌊','❄️','💙'],
+      snow:        ['❄️','🧊','☆','❄️','💙','💠','⚪','❄️'],
+      night:       ['🌙','⭐','🌟','💫','🌌','🌠','💎','✩'],
+      fire:        ['🔥','🟧','🟠','🔥','⚡','🔥','☀️','💎'],
+      petals:      ['🌸','🌷','🌼','🌺','🌹','🥀','🌻','🌸'],
+      aurora:      ['🌌','🌠','🔮','✨','💫','🪩','💚','💜'],
+      golden:      ['👑','💛','⚜️','🪙','☀️','🏆','🌟','✨'],
+    };
+
+    const EFFECT_ICONS = {
+      hearts:'💖', sparkle:'✨', roses:'🌹', stars:'🌟', rainbow:'🌈',
+      firework:'🎆', butterflies:'🦋', diamonds:'💎', waves:'🌊',
+      snow:'❄️', night:'🌙', fire:'🔥', petals:'🌸',
+      aurora:'🌌', golden:'👑',
+    };
+
+    // Config por efecto: cómo se mueven las partículas
+    const EFFECT_SPAWN = {
+      // [spreadMode, count, distMin, distMax, durMin, durMax]
+      hearts:      { mode:'burst',   count:20, dMin:100, dMax:240, durMin:1.8, durMax:3.0 },
+      sparkle:     { mode:'burst',   count:24, dMin:120, dMax:280, durMin:1.2, durMax:2.2 },
+      roses:       { mode:'up',      count:14, dMin:60,  dMax:140, durMin:2.5, durMax:3.5 },
+      stars:       { mode:'burst',   count:22, dMin:140, dMax:300, durMin:1.0, durMax:2.0 },
+      rainbow:     { mode:'arc',     count:18, dMin:100, dMax:200, durMin:1.8, durMax:2.8 },
+      firework:    { mode:'burst',   count:22, dMin:100, dMax:260, durMin:1.0, durMax:2.0 },
+      butterflies: { mode:'flutter', count:12, dMin:80,  dMax:180, durMin:2.8, durMax:3.8 },
+      diamonds:    { mode:'spiral',  count:14, dMin:80,  dMax:160, durMin:1.8, durMax:2.8 },
+      waves:       { mode:'wave',    count:16, dMin:80,  dMax:180, durMin:2.2, durMax:3.2 },
+      snow:        { mode:'fall',    count:20, dMin:80,  dMax:200, durMin:3.0, durMax:4.5 },
+      night:       { mode:'scatter', count:20, dMin:60,  dMax:200, durMin:2.5, durMax:4.0 },
+      fire:        { mode:'fire',    count:16, dMin:60,  dMax:140, durMin:1.4, durMax:2.2 },
+      petals:      { mode:'petal',   count:16, dMin:80,  dMax:200, durMin:2.8, durMax:4.0 },
+      aurora:      { mode:'aurora',  count:22, dMin:90,  dMax:220, durMin:3.0, durMax:4.2 },
+      golden:      { mode:'golden',  count:24, dMin:110, dMax:260, durMin:2.0, durMax:3.2 },
+    };
+
+    let msgQueue = [];
+    let msgShowing = false;
+
+    function showLoveMessage(text, effect) {
+      msgQueue.push({ text, effect });
+      if (!msgShowing) processQueue();
+    }
+
+    function processQueue() {
+      if (msgQueue.length === 0) { msgShowing = false; return; }
+      msgShowing = true;
+      const { text, effect } = msgQueue.shift();
+      displayMessage(text, effect);
+    }
+
+    function displayMessage(text, effect) {
+      const overlay = document.getElementById('loveMessageOverlay');
+
+      // Create card
+      const card = document.createElement('div');
+      card.className = `lm-card lm-effect-${effect}`;
+
+      const emojis = EFFECT_EMOJIS[effect] || EFFECT_EMOJIS.hearts;
+      const icon   = EFFECT_ICONS[effect] || '💌';
+
+      card.innerHTML = `
+        <div style="position:relative;border-radius:30px">
+          <div class="lm-border-anim"></div>
+          <div class="lm-inner">
+            <div class="lm-bg-shimmer"></div>
+            <div class="lm-content">
+              <span class="lm-icon">${icon}</span>
+              <div class="lm-from">💌 Mensaje especial para ti</div>
+              <p class="lm-text"></p>
+              <button class="lm-close">💖 Gracias, mi amor</button>
+            </div>
+          </div>
+        </div>`;
+
+      overlay.appendChild(card);
+
+      // Typewriter effect for text
+      const textEl = card.querySelector('.lm-text');
+      typeWrite(textEl, text, 28);
+
+      // Trigger special 3D board illumination if selected
+      if (effect === 'aurora' && window.triggerBoardAurora) {
+        window.triggerBoardAurora();
+      } else if (effect === 'golden' && window.triggerBoardGolden) {
+        window.triggerBoardGolden();
+      }
+
+      // Animate in
+      requestAnimationFrame(() => {
+        card.classList.add('lm-entering');
+      });
+
+      // Spawn floating particles
+      spawnParticles(emojis, effect);
+
+      // Close button
+      const closeBtn = card.querySelector('.lm-close');
+      let closed = false;
+      function closeCard() {
+        if (closed) return;
+        closed = true;
+        clearParticles();
+        card.classList.remove('lm-entering');
+        card.classList.add('lm-leaving');
+        setTimeout(() => {
+          card.remove();
+          setTimeout(processQueue, 400);
+        }, 500);
+      }
+
+      closeBtn.addEventListener('click', closeCard);
+
+      // Auto-close after 10 seconds
+      const autoClose = setTimeout(closeCard, 10000);
+      closeBtn.addEventListener('click', () => clearTimeout(autoClose), { once: true });
+    }
+
+    // ── Typewriter ──
+    function typeWrite(el, text, speed) {
+      const chars = [...text]; // Unicode-safe
+      let i = 0;
+      el.textContent = '';
+      const tick = () => {
+        if (i < chars.length) {
+          el.textContent += chars[i++];
+          setTimeout(tick, speed + (chars[i-1] === ' ' ? 20 : 0));
+        }
+      };
+      tick();
+    }
+
+    // ── Particles — 15 modos de movimiento ──
+    let activeParticles = [];
+
+    function spawnParticles(emojis, effect) {
+      const cfg  = EFFECT_SPAWN[effect] || EFFECT_SPAWN.hearts;
+      const cx   = window.innerWidth  / 2;
+      const cy   = window.innerHeight / 2;
+      const count = cfg.count;
+
+      for (let i = 0; i < count; i++) {
+        const el = document.createElement('div');
+        el.className = 'lm-particle lm-p-' + effect;
+        el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+
+        let tx, ty, tx2, ty2;
+        const dist = cfg.dMin + Math.random() * (cfg.dMax - cfg.dMin);
+        const dur  = cfg.durMin + Math.random() * (cfg.durMax - cfg.durMin);
+        const del  = Math.random() * 0.5;
+        const rot0 = (Math.random() - .5) * 60;
+        const rot1 = rot0 + (Math.random() - .5) * 300;
+        const rot2 = rot1 + (Math.random() - .5) * 200;
+        let wav = 0, wav2 = 0;
+
+        switch (cfg.mode) {
+          case 'burst': {
+            const a = (i / count) * Math.PI * 2 + Math.random() * .5;
+            tx  = Math.cos(a) * dist;         ty  = Math.sin(a) * dist - 40;
+            tx2 = tx * 1.25;                  ty2 = ty * 1.2 - 30;
+            break;
+          }
+          case 'up': {
+            const ax = (Math.random() - .5) * Math.PI * .9;
+            tx  = Math.sin(ax) * dist;        ty  = -Math.abs(Math.cos(ax) * dist) - 20;
+            tx2 = tx * 1.1;                   ty2 = ty - 60;
+            break;
+          }
+          case 'arc': {
+            // Only upper half — forms a rainbow arc
+            const a = -Math.PI + (i / count) * Math.PI;
+            tx  = Math.cos(a) * dist;         ty  = Math.sin(a) * dist - dist * .2;
+            tx2 = tx * 1.1;                   ty2 = ty - 40;
+            break;
+          }
+          case 'flutter': {
+            const a = (Math.random() - .5) * Math.PI * 1.2;
+            tx  = Math.cos(a) * dist;         ty  = -Math.abs(Math.sin(a) * dist * .6) - 30;
+            tx2 = tx + (Math.random() - .5) * 60; ty2 = ty - 50;
+            wav = (Math.random() - .5) * 80;  wav2 = (Math.random() - .5) * 40;
+            break;
+          }
+          case 'spiral': {
+            const a = (i / count) * Math.PI * 4;
+            tx  = Math.cos(a) * dist * .7;    ty  = Math.sin(a) * dist * .7 - 20;
+            tx2 = Math.cos(a + .5) * dist;    ty2 = Math.sin(a + .5) * dist - 30;
+            break;
+          }
+          case 'wave': {
+            const a = (i / count) * Math.PI * 2;
+            tx  = Math.cos(a) * dist;         ty  = Math.sin(a) * dist * .4;
+            tx2 = tx + (i % 2 === 0 ? 40 : -40); ty2 = ty - 20;
+            break;
+          }
+          case 'fall': {
+            tx  = (Math.random() - .5) * dist * 2.5;
+            ty  = -(dist * .5 + Math.random() * 80);  // start above
+            tx2 = tx + (Math.random() - .5) * 60;
+            ty2 = dist * 1.2;  // fall down below center
+            break;
+          }
+          case 'scatter': {
+            // Scatter in place at random distances, then drift up
+            const a = Math.random() * Math.PI * 2;
+            tx  = Math.cos(a) * dist;         ty  = Math.sin(a) * dist;
+            tx2 = tx + (Math.random() - .5) * 40; ty2 = ty - 60;
+            break;
+          }
+          case 'fire': {
+            const ax = (Math.random() - .5) * Math.PI * .7;
+            tx  = Math.sin(ax) * dist * .8;   ty  = -(dist + Math.random() * 60);
+            tx2 = tx + (Math.random() - .5) * 30; ty2 = ty - 80;
+            break;
+          }
+          case 'petal': {
+            // Diagonal from top — like wind blowing petals
+            const side = i % 2 === 0 ? 1 : -1;
+            tx  = side * (dist * .6 + Math.random() * 60);
+            ty  = -(dist * .3 + Math.random() * 80);
+            tx2 = tx + side * (40 + Math.random() * 60);
+            ty2 = dist * .8 + Math.random() * 60;
+            break;
+          }
+          case 'aurora': {
+            // Mystical glowing wave motion across full 360 with wave distortion
+            const a = (i / count) * Math.PI * 2;
+            tx  = Math.cos(a) * dist;         ty  = Math.sin(a) * (dist * 0.7) - 20;
+            tx2 = Math.cos(a + 0.6) * (dist * 1.35); ty2 = Math.sin(a + 0.6) * (dist * 0.9) - 50;
+            wav = (Math.sin(i * 1.5) * 60);   wav2 = (Math.cos(i * 1.5) * 50);
+            break;
+          }
+          case 'golden': {
+            // Solar flare explosion radiating outwards with rapid zoom
+            const a = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.3;
+            tx  = Math.cos(a) * (dist * 0.9); ty  = Math.sin(a) * (dist * 0.9);
+            tx2 = Math.cos(a) * (dist * 1.45); ty2 = Math.sin(a) * (dist * 1.45);
+            break;
+          }
+          default: {
+            const a = Math.random() * Math.PI * 2;
+            tx = Math.cos(a) * dist; ty = Math.sin(a) * dist;
+            tx2 = tx * 1.2; ty2 = ty * 1.2;
+          }
+        }
+
+        el.style.cssText = [
+          `left:${cx}px`, `top:${cy}px`,
+          `--tx:${tx}px`, `--ty:${ty}px`,
+          `--tx2:${tx2}px`, `--ty2:${ty2}px`,
+          `--rot0:${rot0}deg`, `--rot1:${rot1}deg`, `--rot2:${rot2}deg`,
+          `--dur:${dur}s`, `--delay:${del}s`,
+          `--wav:${wav}px`, `--wav2:${wav2}px`,
+          `font-size:${1.0 + Math.random() * 1.4}em`,
+        ].join(';');
+
+        document.body.appendChild(el);
+        activeParticles.push(el);
+
+        setTimeout(() => {
+          el.remove();
+          activeParticles = activeParticles.filter(p => p !== el);
+        }, (dur + del) * 1000 + 300);
+      }
+    }
+
+    function clearParticles() {
+      activeParticles.forEach(p => p.remove());
+      activeParticles = [];
+    }
+
+    // ── BroadcastChannel (misma pestaña / prueba local) ──
+    try {
+      const bc = new BroadcastChannel('puzzle_love_msgs');
+      bc.onmessage = (e) => {
+        if (e.data?.text) showLoveMessage(e.data.text, e.data.effect || 'hearts');
+      };
+    } catch(e) {}
+
+    // Exponer globalmente para pruebas desde consola
+    window.showLoveMessage = showLoveMessage;
   </script>
 </body>
 
