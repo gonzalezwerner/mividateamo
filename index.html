@@ -1,1439 +1,2158 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Amor 3D">
-<meta name="theme-color" content="#121016">
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💕</text></svg>">
-<title>💕 Rompecabezas Romántico 3D — 500 Piezas</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{overflow:hidden;overscroll-behavior:none;touch-action:none;
-  background:#121016;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:#fff;
-  height:100%;width:100%;position:fixed}
-canvas{display:block;touch-action:none;position:fixed;inset:0;z-index:0}
-/* iOS: prevent callout/selection on long press */
-* { -webkit-touch-callout:none; -webkit-user-select:none; user-select:none; }
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Amor 3D">
+  <meta name="theme-color" content="#121016">
+  <link rel="apple-touch-icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💕</text></svg>">
+  <title>💕 Rompecabezas Romántico 3D — 500 Piezas</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent
+    }
 
-/* Soft ambient vignette */
-body::after{content:'';position:fixed;inset:0;
-  background:radial-gradient(ellipse at center,transparent 60%,rgba(5,3,8,.5) 100%);
-  pointer-events:none;z-index:1}
+    html,
+    body {
+      overflow: hidden;
+      overscroll-behavior: none;
+      touch-action: none;
+      background: #121016;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      color: #fff;
+      height: 100%;
+      width: 100%;
+      position: fixed
+    }
 
-/* Screen flash on snap */
-#flash{position:fixed;inset:0;background:rgba(255,200,160,.18);pointer-events:none;z-index:2;
-  opacity:0;transition:opacity .1s ease-out}
-#flash.on{opacity:1;transition:none}
+    canvas {
+      display: block;
+      touch-action: none;
+      position: fixed;
+      inset: 0;
+      z-index: 0
+    }
 
-#loading{position:fixed;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;
-  background:linear-gradient(135deg,#1f1322,#2c1a2e,#170e1c);z-index:200;transition:opacity .7s}
-#loading.hidden{opacity:0;pointer-events:none}
-#loading h1{font-size:2.2em;background:linear-gradient(90deg,#ff9a76,#ffc3a0,#ff8da1,#fca5a5);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center;padding:0 15px;
-  filter:drop-shadow(0 2px 8px rgba(255,150,120,.3))}
-#loading .sub{color:#fde047;margin:6px 0 24px;font-size:1.05em;font-weight:500}
-#loading .bar{width:min(340px,82vw);height:7px;background:rgba(255,255,255,.12);border-radius:4px;overflow:hidden}
-#loading .bar-fill{height:100%;background:linear-gradient(90deg,#f97316,#fb7185,#e11d48);width:0%;transition:width .12s}
-#loading .status{margin-top:14px;color:rgba(255,255,255,.75);font-size:.9em}
+    /* iOS: prevent callout/selection on long press */
+    * {
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+    }
 
-#hud{position:fixed;top:0;left:0;right:0;
-  padding:max(10px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) 10px max(14px,env(safe-area-inset-left));
-  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;
-  background:rgba(24,18,30,.88);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
-  border-bottom:1px solid rgba(255,180,140,.2);box-shadow:0 4px 20px rgba(0,0,0,.35);z-index:10}
-.sec{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.st{text-align:center;min-width:48px}
-.st .v{font-size:1.25em;font-weight:800;background:linear-gradient(90deg,#ffedd5,#fbcfe8,#fed7aa);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.st .l{font-size:.62em;color:rgba(255,230,210,.75);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
-.btn{padding:8px 13px;min-height:42px;min-width:42px;display:inline-flex;align-items:center;justify-content:center;
-  background:rgba(255,180,140,.12);border:1px solid rgba(255,200,160,.28);color:#ffedd5;
-  border-radius:10px;cursor:pointer;font-size:.82em;font-weight:600;transition:all .2s;font-family:inherit;
-  -webkit-user-select:none;user-select:none;box-shadow:0 2px 10px rgba(0,0,0,.25)}
-.btn:hover,.btn:active{background:rgba(255,180,140,.25);border-color:rgba(255,220,180,.6);transform:scale(0.97)}
-.btn.active{background:rgba(249,115,22,.4);border-color:#fb923c;color:#fff;box-shadow:0 0 14px rgba(249,115,22,.5)}
+    /* Soft ambient vignette */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 60%, rgba(5, 3, 8, .5) 100%);
+      pointer-events: none;
+      z-index: 1
+    }
 
-#ref-panel{position:fixed;bottom:max(14px,env(safe-area-inset-bottom));right:max(14px,env(safe-area-inset-right));
-  display:none;border:2px solid rgba(255,180,140,.45);border-radius:12px;overflow:hidden;z-index:10;
-  box-shadow:0 6px 30px rgba(0,0,0,.5);background:#0a060e}
-#ref-panel.visible{display:block}
+    /* Screen flash on snap */
+    #flash {
+      position: fixed;
+      inset: 0;
+      background: rgba(255, 200, 160, .18);
+      pointer-events: none;
+      z-index: 2;
+      opacity: 0;
+      transition: opacity .1s ease-out
+    }
 
-#help{position:fixed;bottom:max(12px,env(safe-area-inset-bottom));left:max(12px,env(safe-area-inset-left));
-  background:rgba(24,18,30,.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  padding:8px 14px;border-radius:8px;border:1px solid rgba(255,200,160,.2);
-  font-size:.72em;color:rgba(255,230,210,.75);z-index:10;line-height:1.7}
-#help kbd{background:rgba(255,180,140,.18);padding:1px 6px;border-radius:4px;font-family:monospace;color:#ffedd5;border:1px solid rgba(255,200,160,.3)}
+    #flash.on {
+      opacity: 1;
+      transition: none
+    }
 
-#toast{position:fixed;bottom:max(80px,calc(env(safe-area-inset-bottom)+70px));left:50%;transform:translateX(-50%);
-  background:rgba(30,20,38,.95);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-  padding:11px 24px;border-radius:24px;border:1px solid rgba(255,200,160,.35);box-shadow:0 4px 25px rgba(0,0,0,.4);
-  font-size:.85em;color:#ffedd5;font-weight:600;z-index:20;opacity:0;transition:opacity .35s;pointer-events:none;white-space:nowrap}
-#toast.show{opacity:1}
+    #loading {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #1f1322, #2c1a2e, #170e1c);
+      z-index: 200;
+      transition: opacity .7s
+    }
 
-/* ── Snap love word overlays ── */
-.snap-word{
-  position:fixed;z-index:50;pointer-events:none;
-  font-weight:800;font-style:italic;white-space:nowrap;
-  font-family:'Segoe UI',system-ui,sans-serif;
-  font-size:clamp(1em,4vw,1.4em);
-  opacity:0;transform:translateX(-50%) translateY(0) scale(.4);
-  text-shadow:0 0 18px currentColor,0 2px 8px rgba(0,0,0,.6);
-  will-change:transform,opacity;
-}
-.snap-word.snap-pop{
-  animation:snapWordAnim 1.5s cubic-bezier(.175,.885,.32,1.275) forwards;
-}
-@keyframes snapWordAnim{
-  0%  {opacity:0;transform:translateX(-50%) translateY(0px) scale(.35) rotate(-8deg)}
-  18% {opacity:1;transform:translateX(-50%) translateY(-18px) scale(1.25) rotate(3deg)}
-  45% {opacity:1;transform:translateX(-50%) translateY(-28px) scale(1.05) rotate(-1deg)}
-  75% {opacity:.85;transform:translateX(-50%) translateY(-42px) scale(1) rotate(0deg)}
-  100%{opacity:0;transform:translateX(-50%) translateY(-70px) scale(.8) rotate(2deg)}
-}
-/* Flash overlay circle */
-.snap-burst{
-  position:fixed;pointer-events:none;z-index:45;
-  border-radius:50%;transform:translate(-50%,-50%) scale(0);
-  animation:snapBurstAnim .7s ease-out forwards;
-}
-@keyframes snapBurstAnim{
-  0%  {opacity:.75;transform:translate(-50%,-50%) scale(0)}
-  55% {opacity:.45;transform:translate(-50%,-50%) scale(1)}
-  100%{opacity:0; transform:translate(-50%,-50%) scale(1.6)}
-}
+    #loading.hidden {
+      opacity: 0;
+      pointer-events: none
+    }
 
-/* ═══ WIN CELEBRATION ═══ */
-#win{position:fixed;inset:0;display:none;z-index:300;overflow:hidden}
-#win.visible{display:block}
-.win-bg{position:absolute;inset:0;background:rgba(18,12,24,0);backdrop-filter:blur(0px);-webkit-backdrop-filter:blur(0px);
-  animation:winBgIn 2.5s ease forwards}
-@keyframes winBgIn{to{background:rgba(10,6,18,.93);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px)}}
-.win-body{position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;
-  height:100%;z-index:1;padding:20px 28px;text-align:center;gap:0;overflow-y:auto}
+    #loading h1 {
+      font-size: 2.2em;
+      background: linear-gradient(90deg, #ff9a76, #ffc3a0, #ff8da1, #fca5a5);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-align: center;
+      padding: 0 15px;
+      filter: drop-shadow(0 2px 8px rgba(255, 150, 120, .3))
+    }
 
-/* Big pulsing heart */
-.big-heart{font-size:5.5em;animation:pulseH 1s ease-in-out infinite,popIn .7s cubic-bezier(.175,.885,.32,1.275);
-  filter:drop-shadow(0 0 40px rgba(251,113,133,1));will-change:transform}
-@keyframes pulseH{0%,100%{transform:scale(1)}50%{transform:scale(1.28)}}
-@keyframes popIn{from{opacity:0;transform:scale(0) rotate(-25deg)}to{opacity:1;transform:scale(1) rotate(0)}}
+    #loading .sub {
+      color: #fde047;
+      margin: 6px 0 24px;
+      font-size: 1.05em;
+      font-weight: 500
+    }
 
-/* Main title */
-.win-title{font-size:clamp(2em,7vw,3.4em);font-weight:900;margin:8px 0 4px;
-  background:linear-gradient(90deg,#ffedd5,#fed7aa,#f472b6,#fb7185,#fde047,#f472b6,#ffedd5);background-size:400% 100%;
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  animation:shimmer 2.5s linear infinite,riseIn 1s ease .3s both;
-  filter:drop-shadow(0 3px 18px rgba(251,113,133,.5))}
-@keyframes shimmer{0%{background-position:0% center}100%{background-position:400% center}}
-@keyframes riseIn{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+    #loading .bar {
+      width: min(340px, 82vw);
+      height: 7px;
+      background: rgba(255, 255, 255, .12);
+      border-radius: 4px;
+      overflow: hidden
+    }
 
-/* Geraldine name — glowing pulse */
-.win-name{font-size:clamp(2.4em,8vw,4.2em);font-weight:900;letter-spacing:2px;
-  background:linear-gradient(120deg,#fde68a,#fb7185,#f9a8d4,#fde68a);background-size:300% 100%;
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  animation:shimmer 2s linear infinite,nameIn 1.2s cubic-bezier(.175,.885,.32,1.275) .7s both;
-  filter:drop-shadow(0 0 24px rgba(249,168,212,.9));margin:4px 0 2px}
-@keyframes nameIn{from{opacity:0;transform:scale(.4) rotate(-8deg)}to{opacity:1;transform:scale(1) rotate(0)}}
+    #loading .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #f97316, #fb7185, #e11d48);
+      width: 0%;
+      transition: width .12s
+    }
 
-/* Love message card */
-.win-card{background:rgba(255,182,193,.07);border:1px solid rgba(251,113,133,.35);
-  border-radius:18px;padding:14px 22px;max-width:520px;margin:10px 0;
-  animation:riseIn 1s ease 1.4s both;backdrop-filter:blur(8px);
-  box-shadow:0 0 40px rgba(244,114,182,.1),inset 0 0 20px rgba(251,113,133,.04)}
-.win-card p{font-size:clamp(.95em,2.8vw,1.2em);color:#ffe4e6;font-style:italic;
-  line-height:1.7;margin:0}
+    #loading .status {
+      margin-top: 14px;
+      color: rgba(255, 255, 255, .75);
+      font-size: .9em
+    }
 
-/* Cycling love messages */
-.win-messages{max-width:530px;min-height:3.8em;margin:8px 0;
-  animation:riseIn 1s ease 2s both}
-.win-msg{font-size:clamp(1em,3vw,1.25em);color:#fecdd3;font-style:italic;
-  line-height:1.6;opacity:0;position:absolute;left:50%;transform:translateX(-50%);
-  width:100%;transition:opacity .7s ease,transform .7s ease;pointer-events:none;text-align:center}
-.win-msg.msg-active{opacity:1;position:relative;left:auto;transform:none;pointer-events:auto}
-.win-msg-wrap{position:relative;display:flex;align-items:center;justify-content:center;
-  min-height:3.6em;width:100%}
+    #hud {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: max(10px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) 10px max(14px, env(safe-area-inset-left));
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      background: rgba(24, 18, 30, .88);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(255, 180, 140, .2);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, .35);
+      z-index: 10
+    }
 
-/* Time & signature */
-.win-time{color:rgba(255,220,200,.7);margin:6px 0 2px;animation:riseIn 1s ease 2.4s both;
-  font-size:.95em;font-weight:600}
-.win-sig{font-size:clamp(1em,3vw,1.3em);color:#fda4af;margin:4px 0 10px;
-  animation:riseIn 1s ease 2.8s both;font-weight:700;
-  filter:drop-shadow(0 0 8px rgba(253,164,175,.6))}
+    .sec {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap
+    }
 
-/* Replay button */
-.win-btn{margin-top:6px;font-size:1em!important;padding:13px 36px!important;animation:riseIn 1s ease 3.2s both;
-  background:linear-gradient(135deg,#f97316,#e11d48)!important;color:#fff!important;border:none!important;
-  box-shadow:0 0 35px rgba(249,115,22,.7)!important;font-weight:700}
+    .st {
+      text-align: center;
+      min-width: 48px
+    }
 
-/* Floating emojis */
-.float-emoji{position:absolute;bottom:-60px;pointer-events:none;animation:floatUp linear forwards}
-@keyframes floatUp{0%{transform:translateY(0) rotate(0deg) scale(.4);opacity:0}8%{opacity:.9}80%{opacity:.8}
-  100%{transform:translateY(-120vh) rotate(540deg) scale(1.3);opacity:0}}
+    .st .v {
+      font-size: 1.25em;
+      font-weight: 800;
+      background: linear-gradient(90deg, #ffedd5, #fbcfe8, #fed7aa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text
+    }
 
-/* Sparkle rings */
-.sparkle-ring{position:absolute;top:50%;left:50%;width:0;height:0;border-radius:50%;
-  border:2px solid rgba(254,215,170,.55);animation:expandRing 3.5s ease-out forwards;pointer-events:none}
-@keyframes expandRing{0%{width:0;height:0;opacity:1;margin-top:0;margin-left:0}
-  100%{width:130vmax;height:130vmax;opacity:0;margin-top:-65vmax;margin-left:-65vmax}}
+    .st .l {
+      font-size: .62em;
+      color: rgba(255, 230, 210, .75);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      font-weight: 600
+    }
 
-/* Letter-by-letter name sparkle */
-@keyframes letterGlow{
-  0%{opacity:0;text-shadow:0 0 0 transparent;transform:translateY(30px) scale(.5)}
-  60%{opacity:1;text-shadow:0 0 20px #fb7185,0 0 40px #f472b6;transform:translateY(-4px) scale(1.15)}
-  100%{opacity:1;text-shadow:0 0 10px rgba(251,113,133,.5);transform:translateY(0) scale(1)}}
-.letter-wrap span{display:inline-block;opacity:0;animation:letterGlow .55s ease forwards}
+    .btn {
+      padding: 8px 13px;
+      min-height: 42px;
+      min-width: 42px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 180, 140, .12);
+      border: 1px solid rgba(255, 200, 160, .28);
+      color: #ffedd5;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: .82em;
+      font-weight: 600;
+      transition: all .2s;
+      font-family: inherit;
+      -webkit-user-select: none;
+      user-select: none;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, .25)
+    }
 
-/* Aurora sweep across background */
-.win-aurora{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0}
-.aurora-band{position:absolute;width:200%;height:380px;border-radius:50%;
-  filter:blur(60px);opacity:0;animation:auroraSweep linear infinite}
-@keyframes auroraSweep{
-  0%{opacity:0;transform:translateX(-60%) translateY(0) rotate(-15deg)}
-  20%{opacity:.35}
-  80%{opacity:.25}
-  100%{opacity:0;transform:translateX(60%) translateY(-60px) rotate(-10deg)}}
+    .btn:hover,
+    .btn:active {
+      background: rgba(255, 180, 140, .25);
+      border-color: rgba(255, 220, 180, .6);
+      transform: scale(0.97)
+    }
 
-@media(max-width:768px){
-  .st .v{font-size:1.1em}.btn{padding:6px 10px;font-size:.76em;min-height:40px;min-width:40px}
-  #help{display:none}.sec{gap:5px}.st{min-width:40px}
-}
-@media(max-width:400px){.st .l{font-size:.55em}.btn{font-size:.72em;padding:5px 7px}}
-</style>
+    .btn.active {
+      background: rgba(249, 115, 22, .4);
+      border-color: #fb923c;
+      color: #fff;
+      box-shadow: 0 0 14px rgba(249, 115, 22, .5)
+    }
+
+    #ref-panel {
+      position: fixed;
+      bottom: max(14px, env(safe-area-inset-bottom));
+      right: max(14px, env(safe-area-inset-right));
+      display: none;
+      border: 2px solid rgba(255, 180, 140, .45);
+      border-radius: 12px;
+      overflow: hidden;
+      z-index: 10;
+      box-shadow: 0 6px 30px rgba(0, 0, 0, .5);
+      background: #0a060e
+    }
+
+    #ref-panel.visible {
+      display: block
+    }
+
+    #help {
+      position: fixed;
+      bottom: max(12px, env(safe-area-inset-bottom));
+      left: max(12px, env(safe-area-inset-left));
+      background: rgba(24, 18, 30, .88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 200, 160, .2);
+      font-size: .72em;
+      color: rgba(255, 230, 210, .75);
+      z-index: 10;
+      line-height: 1.7
+    }
+
+    #help kbd {
+      background: rgba(255, 180, 140, .18);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+      color: #ffedd5;
+      border: 1px solid rgba(255, 200, 160, .3)
+    }
+
+    #toast {
+      position: fixed;
+      bottom: max(80px, calc(env(safe-area-inset-bottom)+70px));
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(30, 20, 38, .95);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      padding: 11px 24px;
+      border-radius: 24px;
+      border: 1px solid rgba(255, 200, 160, .35);
+      box-shadow: 0 4px 25px rgba(0, 0, 0, .4);
+      font-size: .85em;
+      color: #ffedd5;
+      font-weight: 600;
+      z-index: 20;
+      opacity: 0;
+      transition: opacity .35s;
+      pointer-events: none;
+      white-space: nowrap
+    }
+
+    #toast.show {
+      opacity: 1
+    }
+
+    /* ── Snap love word overlays ── */
+    .snap-word {
+      position: fixed;
+      z-index: 50;
+      pointer-events: none;
+      font-weight: 800;
+      font-style: italic;
+      white-space: nowrap;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: clamp(1em, 4vw, 1.4em);
+      opacity: 0;
+      transform: translateX(-50%) translateY(0) scale(.4);
+      text-shadow: 0 0 18px currentColor, 0 2px 8px rgba(0, 0, 0, .6);
+      will-change: transform, opacity;
+    }
+
+    .snap-word.snap-pop {
+      animation: snapWordAnim 1.5s cubic-bezier(.175, .885, .32, 1.275) forwards;
+    }
+
+    @keyframes snapWordAnim {
+      0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(0px) scale(.35) rotate(-8deg)
+      }
+
+      18% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(-18px) scale(1.25) rotate(3deg)
+      }
+
+      45% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(-28px) scale(1.05) rotate(-1deg)
+      }
+
+      75% {
+        opacity: .85;
+        transform: translateX(-50%) translateY(-42px) scale(1) rotate(0deg)
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-70px) scale(.8) rotate(2deg)
+      }
+    }
+
+    /* Flash overlay circle */
+    .snap-burst {
+      position: fixed;
+      pointer-events: none;
+      z-index: 45;
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      animation: snapBurstAnim .7s ease-out forwards;
+    }
+
+    @keyframes snapBurstAnim {
+      0% {
+        opacity: .75;
+        transform: translate(-50%, -50%) scale(0)
+      }
+
+      55% {
+        opacity: .45;
+        transform: translate(-50%, -50%) scale(1)
+      }
+
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1.6)
+      }
+    }
+
+    /* ═══ WIN CELEBRATION ═══ */
+    #win {
+      position: fixed;
+      inset: 0;
+      display: none;
+      z-index: 300;
+      overflow: hidden
+    }
+
+    #win.visible {
+      display: block
+    }
+
+    .win-bg {
+      position: absolute;
+      inset: 0;
+      background: rgba(18, 12, 24, 0);
+      backdrop-filter: blur(0px);
+      -webkit-backdrop-filter: blur(0px);
+      animation: winBgIn 2.5s ease forwards
+    }
+
+    @keyframes winBgIn {
+      to {
+        background: rgba(10, 6, 18, .93);
+        backdrop-filter: blur(28px);
+        -webkit-backdrop-filter: blur(28px)
+      }
+    }
+
+    .win-body {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      z-index: 1;
+      padding: 20px 28px;
+      text-align: center;
+      gap: 0;
+      overflow-y: auto
+    }
+
+    /* Big pulsing heart */
+    .big-heart {
+      font-size: 5.5em;
+      animation: pulseH 1s ease-in-out infinite, popIn .7s cubic-bezier(.175, .885, .32, 1.275);
+      filter: drop-shadow(0 0 40px rgba(251, 113, 133, 1));
+      will-change: transform
+    }
+
+    @keyframes pulseH {
+
+      0%,
+      100% {
+        transform: scale(1)
+      }
+
+      50% {
+        transform: scale(1.28)
+      }
+    }
+
+    @keyframes popIn {
+      from {
+        opacity: 0;
+        transform: scale(0) rotate(-25deg)
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1) rotate(0)
+      }
+    }
+
+    /* Main title */
+    .win-title {
+      font-size: clamp(2em, 7vw, 3.4em);
+      font-weight: 900;
+      margin: 8px 0 4px;
+      background: linear-gradient(90deg, #ffedd5, #fed7aa, #f472b6, #fb7185, #fde047, #f472b6, #ffedd5);
+      background-size: 400% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 2.5s linear infinite, riseIn 1s ease .3s both;
+      filter: drop-shadow(0 3px 18px rgba(251, 113, 133, .5))
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: 0% center
+      }
+
+      100% {
+        background-position: 400% center
+      }
+    }
+
+    @keyframes riseIn {
+      from {
+        opacity: 0;
+        transform: translateY(40px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    /* Geraldine name — glowing pulse */
+    .win-name {
+      font-size: clamp(2.4em, 8vw, 4.2em);
+      font-weight: 900;
+      letter-spacing: 2px;
+      background: linear-gradient(120deg, #fde68a, #fb7185, #f9a8d4, #fde68a);
+      background-size: 300% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 2s linear infinite, nameIn 1.2s cubic-bezier(.175, .885, .32, 1.275) .7s both;
+      filter: drop-shadow(0 0 24px rgba(249, 168, 212, .9));
+      margin: 4px 0 2px
+    }
+
+    @keyframes nameIn {
+      from {
+        opacity: 0;
+        transform: scale(.4) rotate(-8deg)
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1) rotate(0)
+      }
+    }
+
+    /* Love message card */
+    .win-card {
+      background: rgba(255, 182, 193, .07);
+      border: 1px solid rgba(251, 113, 133, .35);
+      border-radius: 18px;
+      padding: 14px 22px;
+      max-width: 520px;
+      margin: 10px 0;
+      animation: riseIn 1s ease 1.4s both;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 0 40px rgba(244, 114, 182, .1), inset 0 0 20px rgba(251, 113, 133, .04)
+    }
+
+    .win-card p {
+      font-size: clamp(.95em, 2.8vw, 1.2em);
+      color: #ffe4e6;
+      font-style: italic;
+      line-height: 1.7;
+      margin: 0
+    }
+
+    /* Cycling love messages */
+    .win-messages {
+      max-width: 530px;
+      min-height: 3.8em;
+      margin: 8px 0;
+      animation: riseIn 1s ease 2s both
+    }
+
+    .win-msg {
+      font-size: clamp(1em, 3vw, 1.25em);
+      color: #fecdd3;
+      font-style: italic;
+      line-height: 1.6;
+      opacity: 0;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      transition: opacity .7s ease, transform .7s ease;
+      pointer-events: none;
+      text-align: center
+    }
+
+    .win-msg.msg-active {
+      opacity: 1;
+      position: relative;
+      left: auto;
+      transform: none;
+      pointer-events: auto
+    }
+
+    .win-msg-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 3.6em;
+      width: 100%
+    }
+
+    /* Time & signature */
+    .win-time {
+      color: rgba(255, 220, 200, .7);
+      margin: 6px 0 2px;
+      animation: riseIn 1s ease 2.4s both;
+      font-size: .95em;
+      font-weight: 600
+    }
+
+    .win-sig {
+      font-size: clamp(1em, 3vw, 1.3em);
+      color: #fda4af;
+      margin: 4px 0 10px;
+      animation: riseIn 1s ease 2.8s both;
+      font-weight: 700;
+      filter: drop-shadow(0 0 8px rgba(253, 164, 175, .6))
+    }
+
+    /* Replay button */
+    .win-btn {
+      margin-top: 6px;
+      font-size: 1em !important;
+      padding: 13px 36px !important;
+      animation: riseIn 1s ease 3.2s both;
+      background: linear-gradient(135deg, #f97316, #e11d48) !important;
+      color: #fff !important;
+      border: none !important;
+      box-shadow: 0 0 35px rgba(249, 115, 22, .7) !important;
+      font-weight: 700
+    }
+
+    /* Floating emojis */
+    .float-emoji {
+      position: absolute;
+      bottom: -60px;
+      pointer-events: none;
+      animation: floatUp linear forwards
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) rotate(0deg) scale(.4);
+        opacity: 0
+      }
+
+      8% {
+        opacity: .9
+      }
+
+      80% {
+        opacity: .8
+      }
+
+      100% {
+        transform: translateY(-120vh) rotate(540deg) scale(1.3);
+        opacity: 0
+      }
+    }
+
+    /* Sparkle rings */
+    .sparkle-ring {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      border: 2px solid rgba(254, 215, 170, .55);
+      animation: expandRing 3.5s ease-out forwards;
+      pointer-events: none
+    }
+
+    @keyframes expandRing {
+      0% {
+        width: 0;
+        height: 0;
+        opacity: 1;
+        margin-top: 0;
+        margin-left: 0
+      }
+
+      100% {
+        width: 130vmax;
+        height: 130vmax;
+        opacity: 0;
+        margin-top: -65vmax;
+        margin-left: -65vmax
+      }
+    }
+
+    /* Letter-by-letter name sparkle */
+    @keyframes letterGlow {
+      0% {
+        opacity: 0;
+        text-shadow: 0 0 0 transparent;
+        transform: translateY(30px) scale(.5)
+      }
+
+      60% {
+        opacity: 1;
+        text-shadow: 0 0 20px #fb7185, 0 0 40px #f472b6;
+        transform: translateY(-4px) scale(1.15)
+      }
+
+      100% {
+        opacity: 1;
+        text-shadow: 0 0 10px rgba(251, 113, 133, .5);
+        transform: translateY(0) scale(1)
+      }
+    }
+
+    .letter-wrap span {
+      display: inline-block;
+      opacity: 0;
+      animation: letterGlow .55s ease forwards
+    }
+
+    /* Aurora sweep across background */
+    .win-aurora {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0
+    }
+
+    .aurora-band {
+      position: absolute;
+      width: 200%;
+      height: 380px;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0;
+      animation: auroraSweep linear infinite
+    }
+
+    @keyframes auroraSweep {
+      0% {
+        opacity: 0;
+        transform: translateX(-60%) translateY(0) rotate(-15deg)
+      }
+
+      20% {
+        opacity: .35
+      }
+
+      80% {
+        opacity: .25
+      }
+
+      100% {
+        opacity: 0;
+        transform: translateX(60%) translateY(-60px) rotate(-10deg)
+      }
+    }
+
+    @media(max-width:768px) {
+      .st .v {
+        font-size: 1.1em
+      }
+
+      .btn {
+        padding: 6px 10px;
+        font-size: .76em;
+        min-height: 40px;
+        min-width: 40px
+      }
+
+      #help {
+        display: none
+      }
+
+      .sec {
+        gap: 5px
+      }
+
+      .st {
+        min-width: 40px
+      }
+    }
+
+    @media(max-width:400px) {
+      .st .l {
+        font-size: .55em
+      }
+
+      .btn {
+        font-size: .72em;
+        padding: 5px 7px
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<div id="flash"></div>
+  <div id="flash"></div>
 
-<div id="loading">
-  <h1>💕 Rompecabezas Romántico 3D</h1>
-  <p class="sub">500 Piezas en Alta Definición</p>
-  <div class="bar"><div class="bar-fill" id="loadBar"></div></div>
-  <p class="status" id="loadStatus">Pintando el lienzo del atardecer...</p>
-</div>
-
-<div id="hud">
-  <div class="sec">
-    <div class="st"><div class="v" id="placed">0</div><div class="l">Colocadas</div></div>
-    <div class="st"><div class="v">/ 500</div><div class="l">Total</div></div>
-    <div class="st"><div class="v" id="timer">00:00</div><div class="l">Tiempo</div></div>
-    <div class="st"><div class="v" id="pct">0%</div><div class="l">Avance</div></div>
-  </div>
-  <div class="sec">
-    <button class="btn" id="btnAudio" title="Sonido">🎵</button>
-    <button class="btn" id="btnRef" title="Referencia">📷</button>
-    <button class="btn" id="btnEdge" title="Bordes">🔲</button>
-    <button class="btn" id="btnRot" title="Rotar pieza">🔄</button>
-    <button class="btn" id="btnMix" title="Revolver">🔀</button>
-    <button class="btn" id="btnSave" title="Guardar progreso" style="color:#86efac;border-color:rgba(134,239,172,.5)">💾</button>
-
-  </div>
-</div>
-
-<div id="ref-panel"><canvas id="refCvs"></canvas></div>
-<div id="help"><kbd>Click</kbd> Seleccionar · <kbd>Arrastrar</kbd> Mover · <kbd>Clic derecho</kbd>/<kbd>R</kbd> Rotar · <kbd>Rueda</kbd> Zoom</div>
-<div id="toast"></div>
-
-<div id="win">
-  <!-- Aurora background -->
-  <div class="win-aurora" id="winAurora"></div>
-  <div class="win-bg"></div>
-  <div class="win-body">
-    <div class="big-heart">💖</div>
-    <div class="win-title">¡Amor Completado!</div>
-    <!-- Geraldine name animated letter by letter -->
-    <div class="win-name letter-wrap" id="winName"></div>
-    <!-- Personal card message -->
-    <div class="win-card">
-      <p>Cada pieza que pusiste en este rompecabezas<br>es como cada instante que me haces feliz...<br>
-      <strong style="color:#fda4af">¡Te amo con todo mi corazón, Geraldine! 💗</strong></p>
+  <div id="loading">
+    <h1>💕 Rompecabezas Romántico 3D</h1>
+    <p class="sub">500 Piezas en Alta Definición</p>
+    <div class="bar">
+      <div class="bar-fill" id="loadBar"></div>
     </div>
-    <!-- Cycling love messages -->
-    <div class="win-messages">
-      <div class="win-msg-wrap">
-        <div class="win-msg msg-active" id="loveMsg"></div>
+    <p class="status" id="loadStatus">Pintando el lienzo del atardecer...</p>
+  </div>
+
+  <div id="hud">
+    <div class="sec">
+      <div class="st">
+        <div class="v" id="placed">0</div>
+        <div class="l">Colocadas</div>
+      </div>
+      <div class="st">
+        <div class="v">/ 500</div>
+        <div class="l">Total</div>
+      </div>
+      <div class="st">
+        <div class="v" id="timer">00:00</div>
+        <div class="l">Tiempo</div>
+      </div>
+      <div class="st">
+        <div class="v" id="pct">0%</div>
+        <div class="l">Avance</div>
       </div>
     </div>
-    <p class="win-time" id="winTime"></p>
-    <div class="win-sig">✨ Con todo mi amor, siempre para ti ✨</div>
-    <button class="btn win-btn" id="btnReplay">Jugar de nuevo 💕</button>
-  </div>
-</div>
+    <div class="sec">
+      <button class="btn" id="btnAudio" title="Sonido">🎵</button>
+      <button class="btn" id="btnRef" title="Referencia">📷</button>
+      <button class="btn" id="btnEdge" title="Bordes">🔲</button>
+      <button class="btn" id="btnRot" title="Rotar pieza">🔄</button>
+      <button class="btn" id="btnMix" title="Revolver">🔀</button>
+      <button class="btn" id="btnSave" title="Guardar progreso"
+        style="color:#86efac;border-color:rgba(134,239,172,.5)">💾</button>
 
-<script type="importmap">
+    </div>
+  </div>
+
+  <div id="ref-panel"><canvas id="refCvs"></canvas></div>
+  <div id="help"><kbd>Click</kbd> Seleccionar · <kbd>Arrastrar</kbd> Mover · <kbd>Clic derecho</kbd>/<kbd>R</kbd> Rotar
+    · <kbd>Rueda</kbd> Zoom</div>
+  <div id="toast"></div>
+
+  <div id="win">
+    <!-- Aurora background -->
+    <div class="win-aurora" id="winAurora"></div>
+    <div class="win-bg"></div>
+    <div class="win-body">
+      <div class="big-heart">💖</div>
+      <div class="win-title">¡Amor Completado!</div>
+      <!-- Geraldine name animated letter by letter -->
+      <div class="win-name letter-wrap" id="winName"></div>
+      <!-- Personal card message -->
+      <div class="win-card">
+        <p>Cada pieza que pusiste en este rompecabezas<br>es como cada instante que me haces feliz...<br>
+          <strong style="color:#fda4af">¡Te amo con todo mi corazón, Geraldine! 💗</strong>
+        </p>
+      </div>
+      <!-- Cycling love messages -->
+      <div class="win-messages">
+        <div class="win-msg-wrap">
+          <div class="win-msg msg-active" id="loveMsg"></div>
+        </div>
+      </div>
+      <p class="win-time" id="winTime"></p>
+      <div class="win-sig">✨ Con todo mi amor, siempre para ti ✨</div>
+      <button class="btn win-btn" id="btnReplay">Jugar de nuevo 💕</button>
+    </div>
+  </div>
+
+  <script type="importmap">
 {"imports":{
   "three":"https://unpkg.com/three@0.164.0/build/three.module.js",
   "three/addons/":"https://unpkg.com/three@0.164.0/examples/jsm/"
 }}
 </script>
-<script type="module">
-import*as THREE from'three';
-import{OrbitControls}from'three/addons/controls/OrbitControls.js';
+  <script type="module">
+    import *as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-// ═══════════════ SOUND SYNTHESIZER ═══════════════
-let audioCtx = null;
-let soundEnabled = true;
+    // ═══════════════ SOUND SYNTHESIZER ═══════════════
+    let audioCtx = null;
+    let soundEnabled = true;
 
-function getAudio() {
-  if (!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  }
-  if (audioCtx.state === 'suspended') {
-    audioCtx.resume();
-  }
-  return audioCtx;
-}
-
-function playSnapSound() {
-  if (!soundEnabled) return;
-  try {
-    const ctx = getAudio();
-    const t = ctx.currentTime;
-    const notes = [523.25, 659.25, 783.99, 1046.50];
-    notes.forEach((freq, idx) => {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, t + idx * 0.04);
-      gain.gain.setValueAtTime(0.08, t + idx * 0.04);
-      gain.gain.exponentialRampToValueAtTime(0.0001, t + idx * 0.04 + 0.55);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(t + idx * 0.04);
-      osc.stop(t + idx * 0.04 + 0.6);
-    });
-  } catch (e) {}
-}
-
-function playWinRomanticMusic() {
-  if (!soundEnabled) return;
-  try {
-    const ctx = getAudio();
-    const t = ctx.currentTime;
-    const melody = [
-      { f: 523.25, d: 0.35, delay: 0 },
-      { f: 659.25, d: 0.35, delay: 0.2 },
-      { f: 783.99, d: 0.35, delay: 0.4 },
-      { f: 1046.50, d: 0.6, delay: 0.6 },
-      { f: 880.00, d: 0.4, delay: 0.95 },
-      { f: 987.77, d: 0.4, delay: 1.2 },
-      { f: 1046.50, d: 1.4, delay: 1.5 },
-      { f: 1318.51, d: 1.8, delay: 2.0 }
-    ];
-    melody.forEach(n => {
-      const osc = ctx.createOscillator();
-      const osc2 = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = 'triangle';
-      osc2.type = 'sine';
-      osc.frequency.setValueAtTime(n.f, t + n.delay);
-      osc2.frequency.setValueAtTime(n.f * 1.002, t + n.delay);
-      gain.gain.setValueAtTime(0.12, t + n.delay);
-      gain.gain.exponentialRampToValueAtTime(0.0001, t + n.delay + n.d);
-      osc.connect(gain);
-      osc2.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(t + n.delay);
-      osc2.start(t + n.delay);
-      osc.stop(t + n.delay + n.d + 0.1);
-      osc2.stop(t + n.delay + n.d + 0.1);
-    });
-  } catch (e) {}
-}
-
-function triggerHaptic() {
-  // iOS 17+ supports impact/notification via Haptic Engine via navigator.vibrate fallback
-  if (navigator.vibrate) {
-    try { navigator.vibrate([15, 20, 30, 15, 10]); } catch (e) {}
-  }
-}
-
-// ═══════════════ CONFIG ═══════════════
-const COLS=25,ROWS=20,TOTAL=500,PW=1.5,PH=1.5,DEPTH=.13;
-const PZW=COLS*PW,PZH=ROWS*PH,TW=2500,TH=2000;
-// iPhone 17 Pro has a 6.3" ProMotion screen — larger snap target for fingertip
-const isMobile='ontouchstart'in window||navigator.maxTouchPoints>0;
-const isHighEndApple=/iPhone/.test(navigator.userAgent)&&window.devicePixelRatio>=3;
-const SNAP_D=isHighEndApple?.55:.44;  // slightly larger snap zone for fingertip
-const SNAP_A=.32;
-
-// ═══════════════ STATE ═══════════════
-const pieces=[];
-let sel=null,placedN=0,t0=0,dragging=false,edgeHL=false;
-let celebActive=false,celebT0=0;
-const dragPlane=new THREE.Plane(new THREE.Vector3(0,0,1),0);
-const dragOff=new THREE.Vector3();
-const mouse=new THREE.Vector2();
-const ray=new THREE.Raycaster();
-let downPos=null,lastTap=0;
-const camStartPos=new THREE.Vector3();
-let loveWaves=[];
-
-// ═══════════════ RENDERER ═══════════════
-const cvs=document.createElement('canvas');
-cvs.style.touchAction='none';
-document.body.appendChild(cvs);
-cvs.addEventListener('pointerdown',onDown);
-cvs.addEventListener('pointermove',onMove);
-cvs.addEventListener('pointerup',onUp);
-cvs.addEventListener('contextmenu',e=>{e.preventDefault();onCtx(e)});
-document.addEventListener('keydown',onKey);
-
-const Renderer=new THREE.WebGLRenderer({canvas:cvs,antialias:true,powerPreference:'high-performance'});
-Renderer.setSize(innerWidth,innerHeight);
-// iPhone 17 Pro: A19 Pro GPU handles 3x pixel ratio (Super Retina XDR ProMotion)
-Renderer.setPixelRatio(isHighEndApple ? Math.min(devicePixelRatio,3) : Math.min(devicePixelRatio,2));
-Renderer.setClearColor(0x131118);
-Renderer.toneMapping = THREE.ACESFilmicToneMapping;
-Renderer.toneMappingExposure = 1.08; // Slightly brighter for OLED display
-
-const scene=new THREE.Scene();
-const cam=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,.1,300);
-// iPhone 17 Pro: 6.3" screen — pull camera a bit closer for better view
-cam.position.set(0,0,isHighEndApple?65:isMobile?78:68);
-
-const ctrl=new OrbitControls(cam,cvs);
-ctrl.enableDamping=true;
-// iPhone 17 Pro: ProMotion 120Hz — smoother damping
-ctrl.dampingFactor=isHighEndApple?.06:.08;
-ctrl.maxDistance=140;ctrl.minDistance=5;
-ctrl.touches={ONE:THREE.TOUCH.ROTATE,TWO:THREE.TOUCH.DOLLY_PAN};
-// Tighten rotation speed for large 6.3" display
-if(isHighEndApple){ctrl.rotateSpeed=.55;ctrl.panSpeed=.7;}
-
-// ═══════════════ NATURAL & BALANCED LIGHTING ═══════════════
-const ambLight=new THREE.AmbientLight(0xfff7ed, 0.95);
-scene.add(ambLight);
-const hemiLight=new THREE.HemisphereLight(0xffedd5, 0x3b2d42, 0.45);
-scene.add(hemiLight);
-
-const dl1=new THREE.DirectionalLight(0xffffff, 0.85); dl1.position.set(25,30,55); scene.add(dl1);
-const dl2=new THREE.DirectionalLight(0xffeedd, 0.4); dl2.position.set(-20,-25,45); scene.add(dl2);
-
-// Subtle warm atmospheric lights
-const orbitL1=new THREE.PointLight(0xfb923c, 1.8, 65); scene.add(orbitL1);
-const orbitL2=new THREE.PointLight(0xf472b6, 1.5, 55); scene.add(orbitL2);
-
-// Proximity feedback light
-const proxLight=new THREE.PointLight(0xf97316, 0, 14); proxLight.position.z=1.5; scene.add(proxLight);
-
-// ═══════════════ SCENE OBJECTS ═══════════════
-// Table
-scene.add(new THREE.Mesh(new THREE.PlaneGeometry(280,230),
-  new THREE.MeshStandardMaterial({color:0x120f18, roughness:0.9, metalness:0.02})).translateZ(-DEPTH-.02));
-
-// Board glow canvas
-const GW=256,GH=200;
-const glowCvs=document.createElement('canvas');glowCvs.width=GW;glowCvs.height=GH;
-const glowCtx=glowCvs.getContext('2d');
-glowCtx.fillStyle='rgba(0,0,0,0)';glowCtx.clearRect(0,0,GW,GH);
-const glowTex=new THREE.CanvasTexture(glowCvs);
-const glowMesh=new THREE.Mesh(new THREE.PlaneGeometry(PZW+6,PZH+6),
-  new THREE.MeshBasicMaterial({map:glowTex,transparent:true,opacity:.7,blending:THREE.AdditiveBlending,depthWrite:false}));
-glowMesh.position.z=-DEPTH+.005;scene.add(glowMesh);
-
-// Frame base
-const frm=new THREE.Mesh(new THREE.PlaneGeometry(PZW,PZH),
-  new THREE.MeshBasicMaterial({color:0x1e1828,transparent:true,opacity:.7}));
-frm.position.z=-DEPTH+.001;scene.add(frm);
-
-// Frame border
-const frmGlowMat=new THREE.LineBasicMaterial({color:0xfb923c,transparent:true,opacity:0.2});
-const frmGlow=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.PlaneGeometry(PZW+.5,PZH+.5)),frmGlowMat);
-frmGlow.position.z=-DEPTH+.015;scene.add(frmGlow);
-const frmBorder=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.PlaneGeometry(PZW+.3,PZH+.3)),
-  new THREE.LineBasicMaterial({color:0x4c3755}));
-frmBorder.position.z=-DEPTH+.01;scene.add(frmBorder);
-
-// ── Subtle atmospheric particles ──
-const AH=60,ahPos=new Float32Array(AH*3),ahVel=[];
-for(let i=0;i<AH;i++){ahPos[i*3]=(Math.random()-.5)*200;ahPos[i*3+1]=(Math.random()-.5)*160;ahPos[i*3+2]=-5-Math.random()*30;
-  ahVel.push({x:(Math.random()-.5)*.02,y:.01+Math.random()*.025})}
-const ahGeo=new THREE.BufferGeometry();
-ahGeo.setAttribute('position',new THREE.Float32BufferAttribute(ahPos,3));
-scene.add(new THREE.Points(ahGeo,new THREE.PointsMaterial({color:0xfb923c,size:.45,transparent:true,opacity:.25})));
-
-// ── Firefly particles ──
-const FF=60,ffPos=new Float32Array(FF*3),ffVel=[];
-for(let i=0;i<FF;i++){
-  ffPos[i*3]=(Math.random()-.5)*PZW*1.8;ffPos[i*3+1]=(Math.random()-.5)*PZH*1.8;ffPos[i*3+2]=.5+Math.random()*4;
-  ffVel.push({vx:(Math.random()-.5)*.18,vy:(Math.random()-.5)*.18,ph:Math.random()*Math.PI*2,sp:.4+Math.random()*1.2})}
-const ffGeo=new THREE.BufferGeometry();ffGeo.setAttribute('position',new THREE.Float32BufferAttribute(ffPos,3));
-const ffMat=new THREE.PointsMaterial({color:0xfde68a,size:.3,transparent:true,opacity:.6,blending:THREE.AdditiveBlending,depthWrite:false});
-scene.add(new THREE.Points(ffGeo,ffMat));
-
-// ── Snap sparkle pool (200 particles) ──
-const SP=200,spPos=new Float32Array(SP*3),spCol=new Float32Array(SP*3),spD=[];
-for(let i=0;i<SP;i++){spPos[i*3+2]=-200;spCol[i*3]=1;spCol[i*3+1]=.5;spCol[i*3+2]=.7;spD.push({vx:0,vy:0,vz:0,life:0,spin:0})}
-const spGeo=new THREE.BufferGeometry();
-spGeo.setAttribute('position',new THREE.BufferAttribute(spPos,3));
-spGeo.setAttribute('color',new THREE.BufferAttribute(spCol,3));
-const spMat=new THREE.PointsMaterial({size:.38,vertexColors:true,transparent:true,opacity:.98,
-  blending:THREE.AdditiveBlending,depthWrite:false});
-scene.add(new THREE.Points(spGeo,spMat));
-
-function emitSnap(px,py,count,spiralMode){
-  let n=0;
-  for(let i=0;i<SP&&n<count;i++){
-    if(spD[i].life<=0){
-      spPos[i*3]=px;spPos[i*3+1]=py;spPos[i*3+2]=.35;
-      let a,s;
-      if(spiralMode){
-        // Spiral burst: evenly spaced angles
-        a=(n/count)*Math.PI*2+Math.random()*.4;
-        s=3+Math.random()*9;
-      }else{
-        a=Math.random()*Math.PI*2;
-        s=2+Math.random()*7;
+    function getAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       }
-      spD[i].vx=Math.cos(a)*s;spD[i].vy=Math.sin(a)*s;spD[i].vz=2+Math.random()*6;
-      spD[i].spin=( Math.random()-.5)*8;
-      spD[i].life=.7+Math.random()*.8;
-      const palettes=[[1,.82,.4],[1,.48,.3],[.95,.3,.48],[1,.92,.6],[.88,.55,.82],[1,.75,.85],[.95,.88,.3]];
-      const c=palettes[Math.random()*palettes.length|0];
-      spCol[i*3]=c[0];spCol[i*3+1]=c[1];spCol[i*3+2]=c[2];n++}}
-  spGeo.attributes.position.needsUpdate=true;spGeo.attributes.color.needsUpdate=true}
-
-// ── Snap ring pool (expanding romantic halos) ──
-const SNAP_RINGS=8;
-const snapRings=[];
-for(let i=0;i<SNAP_RINGS;i++){
-  const geo=new THREE.RingGeometry(.1,.22,48);
-  const mat=new THREE.MeshBasicMaterial({color:0xfb7185,transparent:true,opacity:0,
-    blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide});
-  const mesh=new THREE.Mesh(geo,mat);
-  mesh.position.z=.3;
-  mesh.visible=false;
-  scene.add(mesh);
-  snapRings.push({mesh,mat,life:-1,maxLife:0,px:0,py:0,maxR:0,col:0xfb7185,ring2:null,mat2:null});
-  // Second ring (offset)
-  const geo2=new THREE.RingGeometry(.05,.14,48);
-  const mat2=new THREE.MeshBasicMaterial({color:0xfde047,transparent:true,opacity:0,
-    blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide});
-  const mesh2=new THREE.Mesh(geo2,mat2);
-  mesh2.position.z=.32;mesh2.visible=false;
-  scene.add(mesh2);
-  snapRings[i].ring2=mesh2;snapRings[i].mat2=mat2;
-}
-let snapRingIdx=0;
-
-function emitSnapRing(px,py,intensity){
-  const r=snapRings[snapRingIdx%SNAP_RINGS];
-  snapRingIdx++;
-  r.px=px;r.py=py;
-  r.mesh.position.set(px,py,.3);r.mesh.scale.set(.01,.01,1);r.mesh.visible=true;
-  r.ring2.position.set(px,py,.32);r.ring2.scale.set(.01,.01,1);r.ring2.visible=true;
-  const cols=[0xfb7185,0xf472b6,0xfbbf24,0xa78bfa,0xfda4af,0xfde047];
-  const col=cols[Math.floor(Math.random()*cols.length)];
-  r.mat.color.setHex(col);r.mat2.color.setHex(cols[Math.floor(Math.random()*cols.length)]);
-  r.maxR=(5+Math.random()*7)*intensity;
-  r.maxLife=.9+Math.random()*.5;
-  r.life=r.maxLife;
-}
-
-// ── Mini snap heart pool (3D hearts burst on snap) ──
-const MINI_H=40,miniHearts=[];
-const mhShape=new THREE.Shape();
-mhShape.moveTo(0,.3);mhShape.bezierCurveTo(-.5,.8,-1.1,.3,-1.1,-.3);
-mhShape.bezierCurveTo(-1.1,-.8,-.6,-1.2,0,-1.75);mhShape.bezierCurveTo(.6,-1.2,1.1,-.8,1.1,-.3);
-mhShape.bezierCurveTo(1.1,.3,.5,.8,0,.3);
-const mhGeo=new THREE.ShapeGeometry(mhShape,8);
-mhGeo.center();
-const mhColors=[0xe11d48,0xf472b6,0xfb7185,0xfbbf24,0xfda4af];
-for(let i=0;i<MINI_H;i++){
-  const mat=new THREE.MeshBasicMaterial({color:mhColors[i%mhColors.length],
-    transparent:true,opacity:0,blending:THREE.AdditiveBlending,depthWrite:false});
-  const mesh=new THREE.Mesh(mhGeo,mat);
-  mesh.scale.set(.001,.001,.001);mesh.visible=false;
-  scene.add(mesh);
-  miniHearts.push({mesh,mat,life:-1,vx:0,vy:0,vz:0,vrot:0,spin:0});
-}
-let mhIdx=0;
-
-function emitMiniHearts(px,py,count){
-  for(let n=0;n<count;n++){
-    const h=miniHearts[mhIdx%MINI_H];mhIdx++;
-    const a=Math.random()*Math.PI*2,spd=2.5+Math.random()*6;
-    h.mesh.position.set(px,py,.5);
-    h.mesh.rotation.set(0,0,Math.random()*Math.PI*2);
-    h.mesh.scale.set(.18+Math.random()*.18,.18+Math.random()*.18,.18+Math.random()*.18);
-    h.mesh.visible=true;
-    h.mat.opacity=.9;
-    h.mat.color.setHex(mhColors[Math.floor(Math.random()*mhColors.length)]);
-    h.vx=Math.cos(a)*spd;h.vy=Math.sin(a)*spd;h.vz=2+Math.random()*5;
-    h.vrot=(Math.random()-.5)*6;h.life=.8+Math.random()*.9;
-  }
-}
-
-// ── Love word overlay (HTML DOM pop-ups) ──
-const LOVE_WORDS=['❤️ Te Amo','💕 Mi Amor','🌹 Geraldine','💝 Amor','✨ Para Ti','💖 Mi Vida','💌 Te Quiero','💞 Siempre','💫 Eres Todo','🌸 Mi Cielo','💗 Sin Ti No'];
-const loveWordPool=[];
-for(let i=0;i<6;i++){
-  const el=document.createElement('div');
-  el.className='snap-word';
-  document.body.appendChild(el);
-  loveWordPool.push({el,free:true});
-}
-
-// ═══════════════ 3D ROMANTIC HEART MESH (CELEBRATION) ═══════════════
-const heartShape = new THREE.Shape();
-const x0 = 0, y0 = 0;
-heartShape.moveTo(x0, y0 + 1.2);
-heartShape.bezierCurveTo(x0 - 2, y0 + 3.2, x0 - 4.5, y0 + 1.2, x0 - 4.5, y0 - 1.2);
-heartShape.bezierCurveTo(x0 - 4.5, y0 - 3.2, x0 - 2.5, y0 - 4.8, x0, y0 - 7);
-heartShape.bezierCurveTo(x0 + 2.5, y0 - 4.8, x0 + 4.5, y0 - 3.2, x0 + 4.5, y0 - 1.2);
-heartShape.bezierCurveTo(x0 + 4.5, y0 + 1.2, x0 + 2, y0 + 3.2, x0, y0 + 1.2);
-
-const heart3DGeo = new THREE.ExtrudeGeometry(heartShape, { depth: 1.2, bevelEnabled: true, bevelSegments: 6, steps: 2, bevelSize: 0.6, bevelThickness: 0.6 });
-heart3DGeo.center();
-const heart3DMat = new THREE.MeshStandardMaterial({
-  color: 0xe11d48, emissive: 0xbe123c, emissiveIntensity: 0.5,
-  roughness: 0.2, metalness: 0.15, transparent: true, opacity: 0
-});
-const heart3DMesh = new THREE.Mesh(heart3DGeo, heart3DMat);
-heart3DMesh.position.set(0, 0, 5);
-heart3DMesh.scale.set(0.01, 0.01, 0.01);
-heart3DMesh.visible = false;
-scene.add(heart3DMesh);
-
-// ═══════════════ BOARD GLOW SYSTEM ═══════════════
-function addBoardGlow(col,row){
-  const cx=(col+.5)/COLS*GW, cy=(1-(row+.5)/ROWS)*GH;
-  const r=GW/COLS*3.2;
-  const g=glowCtx.createRadialGradient(cx,cy,0,cx,cy,r);
-  g.addColorStop(0,'rgba(251,146,60,.35)');
-  g.addColorStop(.3,'rgba(244,114,182,.15)');
-  g.addColorStop(.6,'rgba(225,29,72,.05)');
-  g.addColorStop(1,'transparent');
-  glowCtx.fillStyle=g;glowCtx.fillRect(0,0,GW,GH);
-  glowTex.needsUpdate=true;
-  frmGlowMat.opacity=Math.min(.75, 0.2 + placedN/TOTAL*.6);
-}
-
-// ═══════════════ LOVE WAVE SYSTEM ═══════════════
-function addLoveWave(x,y,intensity){
-  loveWaves.push({x,y,t0:performance.now()/1000,dur:2.0,maxR:20,int:intensity||1})}
-
-function updateWaves(now){
-  loveWaves=loveWaves.filter(w=>now-w.t0<w.dur+.4);
-  if(!loveWaves.length&&!celebActive)return;
-  pieces.forEach(p=>{
-    if(!p.userData.placed||p===sel)return;
-    let maxG=0;
-    for(const w of loveWaves){
-      const el=now-w.t0;if(el>w.dur)continue;
-      const dist=Math.sqrt((p.userData.tx-w.x)**2+(p.userData.ty-w.y)**2);
-      const wf=(el/w.dur)*w.maxR,ww=4.0,d=Math.abs(dist-wf);
-      if(d<ww){const fade=1-el/w.dur;maxG=Math.max(maxG,(1-d/ww)*fade*w.int)}}
-    p.material.emissive.setRGB(maxG*.25, maxG*.1, maxG*.05);
-    p.material.emissiveIntensity=maxG*1.2;
-  });
-}
-
-// ═══════════════ SCREEN FLASH ═══════════════
-const flashEl=document.getElementById('flash');
-function screenFlash(){flashEl.classList.add('on');setTimeout(()=>flashEl.classList.remove('on'),90)}
-
-// ═══════════════ REALISTIC ROMANTIC SUNSET PAINTING ═══════════════
-function genImage(){
-  const c=document.createElement('canvas');c.width=TW;c.height=TH;const x=c.getContext('2d');
-  
-  // 1. SKY GRADIENT (Realistic golden-crimson-lavender sunset)
-  const skyH = TH * 0.62;
-  let skyGrad = x.createLinearGradient(0, 0, 0, skyH);
-  skyGrad.addColorStop(0.00, '#2d1b4e'); // Twilight indigo blue-purple
-  skyGrad.addColorStop(0.25, '#5c2d66'); // Deep dusk mauve
-  skyGrad.addColorStop(0.50, '#9e3d64'); // Rich sunset crimson
-  skyGrad.addColorStop(0.72, '#d9534f'); // Warm coral red
-  skyGrad.addColorStop(0.88, '#f39c12'); // Glowing golden amber
-  skyGrad.addColorStop(1.00, '#fef08a'); // Warm golden horizon light
-  x.fillStyle = skyGrad;
-  x.fillRect(0, 0, TW, skyH);
-
-  // 2. SUNSET SUN (Golden radiant orb on horizon)
-  const sunX = TW * 0.52, sunY = skyH * 0.82, sunR = 120;
-  let sunGlow = x.createRadialGradient(sunX, sunY, 10, sunX, sunY, sunR * 4);
-  sunGlow.addColorStop(0, 'rgba(255, 255, 240, 0.95)');
-  sunGlow.addColorStop(0.2, 'rgba(254, 240, 138, 0.7)');
-  sunGlow.addColorStop(0.5, 'rgba(251, 146, 60, 0.35)');
-  sunGlow.addColorStop(1, 'transparent');
-  x.fillStyle = sunGlow;
-  x.fillRect(sunX - sunR*4, sunY - sunR*4, sunR*8, sunR*8);
-
-  x.beginPath();
-  x.arc(sunX, sunY, sunR, 0, Math.PI * 2);
-  x.fillStyle = '#fffbeb';
-  x.fill();
-
-  // 3. REALISTIC CLOUD LAYERS (Volumetric sunset clouds)
-  function drawCloudLayer(y, height, color1, color2, count) {
-    for (let i = 0; i < count; i++) {
-      const cx = (i / count) * TW + (Math.random() - 0.5) * 200;
-      const cy = y + (Math.random() - 0.5) * 40;
-      const rx = 180 + Math.random() * 260;
-      const ry = height + Math.random() * 35;
-      let cg = x.createRadialGradient(cx, cy, 0, cx, cy, rx);
-      cg.addColorStop(0, color1);
-      cg.addColorStop(0.6, color2);
-      cg.addColorStop(1, 'transparent');
-      x.fillStyle = cg;
-      x.beginPath();
-      x.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
-      x.fill();
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
     }
-  }
-  drawCloudLayer(skyH * 0.25, 45, 'rgba(120, 50, 95, 0.5)', 'rgba(70, 30, 70, 0.2)', 10);
-  drawCloudLayer(skyH * 0.45, 55, 'rgba(217, 83, 79, 0.55)', 'rgba(150, 45, 75, 0.25)', 12);
-  drawCloudLayer(skyH * 0.68, 65, 'rgba(251, 146, 60, 0.65)', 'rgba(217, 83, 79, 0.3)', 14);
 
-  // 4. DISTANT MOUNTAIN / ISLAND SILHOUETTES
-  x.fillStyle = '#26122d';
-  x.beginPath();
-  x.moveTo(0, skyH);
-  x.lineTo(TW * 0.18, skyH - 55);
-  x.lineTo(TW * 0.32, skyH - 30);
-  x.lineTo(TW * 0.45, skyH - 70);
-  x.lineTo(TW * 0.60, skyH - 35);
-  x.lineTo(TW * 0.78, skyH - 80);
-  x.lineTo(TW * 0.92, skyH - 40);
-  x.lineTo(TW, skyH - 60);
-  x.lineTo(TW, skyH);
-  x.closePath();
-  x.fill();
-
-  // 5. CALM LAKE / SEA WATER (Reflecting the sunset)
-  const waterH = TH - skyH;
-  let waterGrad = x.createLinearGradient(0, skyH, 0, TH);
-  waterGrad.addColorStop(0.00, '#f59e0b'); // Golden water at horizon
-  waterGrad.addColorStop(0.15, '#c2410c'); // Deep orange
-  waterGrad.addColorStop(0.38, '#9f1239'); // Warm burgundy reflection
-  waterGrad.addColorStop(0.70, '#4c1d47'); // Deep violet-purple
-  waterGrad.addColorStop(1.00, '#1e1028'); // Dark reflective water near shore
-  x.fillStyle = waterGrad;
-  x.fillRect(0, skyH, TW, waterH);
-
-  // Golden Sun reflection on water
-  for (let y = skyH; y < TH; y += 4) {
-    const prog = (y - skyH) / waterH;
-    const spread = 70 + prog * 420;
-    const alpha = (1 - prog * 0.85) * (0.35 + Math.random() * 0.45);
-    x.fillStyle = `rgba(254, 240, 138, ${alpha})`;
-    const rx = sunX + (Math.random() - 0.5) * spread;
-    const rw = 20 + Math.random() * (120 * (1 - prog*0.5));
-    x.fillRect(rx - rw/2, y, rw, 2.5);
-  }
-
-  // Gentle water ripples across the lake
-  for (let i = 0; i < 400; i++) {
-    const ry = skyH + Math.random() * waterH;
-    const prog = (ry - skyH) / waterH;
-    const rx = Math.random() * TW;
-    const rw = 40 + Math.random() * 160 * (prog + 0.5);
-    x.fillStyle = `rgba(255, 180, 140, ${0.08 + Math.random() * 0.15})`;
-    x.fillRect(rx, ry, rw, 1.8);
-  }
-
-  // 6. WOODEN PIER / PROMONTORY WITH ROMANTIC COUPLE SILHOUETTE
-  // Wooden pier structure
-  const pierX = TW * 0.48, pierY = skyH + 80;
-  x.fillStyle = '#110a17';
-  x.beginPath();
-  x.moveTo(pierX - 80, TH);
-  x.lineTo(pierX - 35, pierY);
-  x.lineTo(pierX + 65, pierY);
-  x.lineTo(pierX + 110, TH);
-  x.closePath();
-  x.fill();
-
-  // Pier wood planks texture
-  for (let py = pierY; py < TH; py += 16) {
-    x.strokeStyle = 'rgba(255, 180, 130, 0.12)';
-    x.lineWidth = 2;
-    const t = (py - pierY) / (TH - pierY);
-    const x1 = (pierX - 35) - t * 45;
-    const x2 = (pierX + 65) + t * 45;
-    x.beginPath();
-    x.moveTo(x1, py);
-    x.lineTo(x2, py);
-    x.stroke();
-  }
-
-  // Pier posts / railings
-  x.strokeStyle = '#0d0713';
-  x.lineWidth = 6;
-  x.beginPath();
-  x.moveTo(pierX - 35, pierY); x.lineTo(pierX - 35, pierY - 45);
-  x.moveTo(pierX + 65, pierY); x.lineTo(pierX + 65, pierY - 45);
-  x.moveTo(pierX - 35, pierY - 35); x.lineTo(pierX + 65, pierY - 35);
-  x.stroke();
-
-  // Warm glowing lantern on the pier
-  const lanX = pierX + 65, lanY = pierY - 55;
-  let lanGlow = x.createRadialGradient(lanX, lanY, 2, lanX, lanY, 90);
-  lanGlow.addColorStop(0, 'rgba(254, 240, 138, 0.95)');
-  lanGlow.addColorStop(0.3, 'rgba(249, 115, 22, 0.6)');
-  lanGlow.addColorStop(1, 'transparent');
-  x.fillStyle = lanGlow;
-  x.fillRect(lanX - 90, lanY - 90, 180, 180);
-  x.fillStyle = '#fef08a';
-  x.beginPath(); x.arc(lanX, lanY, 7, 0, Math.PI*2); x.fill();
-
-  // Romantic Couple Silhouette holding hands looking at sunset
-  const cx = pierX + 15, cy = pierY - 5;
-  x.fillStyle = '#0a050f';
-  // Male silhouette
-  x.beginPath();
-  x.arc(cx - 16, cy - 72, 11, 0, Math.PI * 2); // Head
-  x.fill();
-  x.beginPath();
-  x.moveTo(cx - 28, cy - 60);
-  x.lineTo(cx - 4, cy - 60);
-  x.lineTo(cx - 6, cy);
-  x.lineTo(cx - 26, cy);
-  x.closePath();
-  x.fill();
-
-  // Female silhouette leaning gently
-  x.beginPath();
-  x.arc(cx + 8, cy - 66, 10, 0, Math.PI * 2); // Head
-  x.fill();
-  x.beginPath();
-  x.moveTo(cx - 2, cy - 56);
-  x.lineTo(cx + 20, cy - 56);
-  x.lineTo(cx + 26, cy);
-  x.lineTo(cx + 2, cy);
-  x.closePath();
-  x.fill();
-
-  // Hair & dress curve
-  x.beginPath();
-  x.arc(cx + 12, cy - 60, 8, 0, Math.PI * 2);
-  x.fill();
-
-  // 7. BEAUTIFUL CHERRY BLOSSOM / ROSE TREE BRANCH OVERHANG
-  function drawBlossomBranch(startX, startY) {
-    x.strokeStyle = '#140a18';
-    x.lineWidth = 14;
-    x.beginPath();
-    x.moveTo(startX, startY);
-    x.bezierCurveTo(startX - 200, startY + 80, startX - 350, startY + 50, startX - 550, startY + 180);
-    x.stroke();
-    x.lineWidth = 8;
-    x.beginPath();
-    x.moveTo(startX - 200, startY + 80);
-    x.bezierCurveTo(startX - 300, startY + 160, startX - 380, startY + 220, startX - 450, startY + 280);
-    x.stroke();
-
-    // Blossoms / Petals on tree
-    const petalColors = ['#fbcfe8', '#f472b6', '#fda4af', '#fecdd3', '#fb7185', '#fff1f2'];
-    for (let i = 0; i < 350; i++) {
-      const px = startX - Math.random() * 650;
-      const py = startY + Math.random() * 320;
-      const col = petalColors[Math.random() * petalColors.length | 0];
-      x.fillStyle = col;
-      x.beginPath();
-      x.ellipse(px, py, 6 + Math.random() * 8, 4 + Math.random() * 6, Math.random() * Math.PI, 0, Math.PI * 2);
-      x.fill();
+    function playSnapSound() {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudio();
+        const t = ctx.currentTime;
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, t + idx * 0.04);
+          gain.gain.setValueAtTime(0.08, t + idx * 0.04);
+          gain.gain.exponentialRampToValueAtTime(0.0001, t + idx * 0.04 + 0.55);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t + idx * 0.04);
+          osc.stop(t + idx * 0.04 + 0.6);
+        });
+      } catch (e) { }
     }
-  }
-  drawBlossomBranch(TW + 50, -20);
-  drawBlossomBranch(TW * 0.15, -40);
 
-  // 8. GENTLY FALLING PETALS IN THE BREEZE
-  for (let i = 0; i < 90; i++) {
-    const px = Math.random() * TW;
-    const py = Math.random() * TH;
-    x.fillStyle = Math.random() > 0.5 ? '#fbcfe8' : '#fda4af';
-    x.beginPath();
-    x.ellipse(px, py, 5 + Math.random()*5, 3 + Math.random()*3, Math.random()*Math.PI, 0, Math.PI*2);
-    x.fill();
-  }
+    function playWinRomanticMusic() {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudio();
+        const t = ctx.currentTime;
+        const melody = [
+          { f: 523.25, d: 0.35, delay: 0 },
+          { f: 659.25, d: 0.35, delay: 0.2 },
+          { f: 783.99, d: 0.35, delay: 0.4 },
+          { f: 1046.50, d: 0.6, delay: 0.6 },
+          { f: 880.00, d: 0.4, delay: 0.95 },
+          { f: 987.77, d: 0.4, delay: 1.2 },
+          { f: 1046.50, d: 1.4, delay: 1.5 },
+          { f: 1318.51, d: 1.8, delay: 2.0 }
+        ];
+        melody.forEach(n => {
+          const osc = ctx.createOscillator();
+          const osc2 = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc2.type = 'sine';
+          osc.frequency.setValueAtTime(n.f, t + n.delay);
+          osc2.frequency.setValueAtTime(n.f * 1.002, t + n.delay);
+          gain.gain.setValueAtTime(0.12, t + n.delay);
+          gain.gain.exponentialRampToValueAtTime(0.0001, t + n.delay + n.d);
+          osc.connect(gain);
+          osc2.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(t + n.delay);
+          osc2.start(t + n.delay);
+          osc.stop(t + n.delay + n.d + 0.1);
+          osc2.stop(t + n.delay + n.d + 0.1);
+        });
+      } catch (e) { }
+    }
 
-  // 9. SUBTLE ELEGANT TITLE (Harmonious integration)
-  x.save();
-  x.font = 'italic 80px Georgia, serif';
-  x.textAlign = 'center';
-  x.fillStyle = 'rgba(255, 237, 213, 0.18)';
-  x.fillText('Atardecer del Amor', TW * 0.5, TH * 0.94);
-  x.restore();
+    function triggerHaptic() {
+      // iOS 17+ supports impact/notification via Haptic Engine via navigator.vibrate fallback
+      if (navigator.vibrate) {
+        try { navigator.vibrate([15, 20, 30, 15, 10]); } catch (e) { }
+      }
+    }
 
-  return c;
-}
+    // ═══════════════ CONFIG ═══════════════
+    const COLS = 25, ROWS = 20, TOTAL = 500, PW = 1.5, PH = 1.5, DEPTH = .13;
+    const PZW = COLS * PW, PZH = ROWS * PH, TW = 2500, TH = 2000;
+    // iPhone 17 Pro has a 6.3" ProMotion screen — larger snap target for fingertip
+    const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    const isHighEndApple = /iPhone/.test(navigator.userAgent) && window.devicePixelRatio >= 3;
+    const SNAP_D = isHighEndApple ? .55 : .44;  // slightly larger snap zone for fingertip
+    const SNAP_A = .32;
 
-// ═══════════════ TABS & SHAPES ═══════════════
-const hT=Array.from({length:COLS-1},()=>Array.from({length:ROWS},()=>Math.random()>.5?1:-1));
-const vT=Array.from({length:COLS},()=>Array.from({length:ROWS-1},()=>Math.random()>.5?1:-1));
-function getTabs(c,r){return{bottom:r>0?-vT[c][r-1]:0,right:c<COLS-1?hT[c][r]:0,top:r<ROWS-1?vT[c][r]:0,left:c>0?-hT[c-1][r]:0}}
+    // ═══════════════ STATE ═══════════════
+    const pieces = [];
+    let sel = null, placedN = 0, t0 = 0, dragging = false, edgeHL = false;
+    let celebActive = false, celebT0 = 0;
+    const dragPlane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+    const dragOff = new THREE.Vector3();
+    const mouse = new THREE.Vector2();
+    const ray = new THREE.Raycaster();
+    let downPos = null, lastTap = 0;
+    const camStartPos = new THREE.Vector3();
+    let loveWaves = [];
+    // Umbral de px que debe moverse el dedo antes de empezar a arrastrar la pieza
+    const DRAG_THRESHOLD = isMobile ? 12 : 6;
+    let pendingPiece = null;   // pieza seleccionada pero aún sin confirmar arrastre
 
-function jE(s,x1,y1,x2,y2,t){if(!t){s.lineTo(x2,y2);return}
-  const dx=x2-x1,dy=y2-y1,l=Math.sqrt(dx*dx+dy*dy),nx=dy/l*t,ny=-dx/l*t;
-  const p=(u,v)=>({x:x1+dx*u+nx*l*v,y:y1+dy*u+ny*l*v});
-  let a=p(.36,0);s.lineTo(a.x,a.y);
-  let c1=p(.36,.05),c2=p(.30,.14),e=p(.36,.21);s.bezierCurveTo(c1.x,c1.y,c2.x,c2.y,e.x,e.y);
-  c1=p(.41,.28);c2=p(.59,.28);e=p(.64,.21);s.bezierCurveTo(c1.x,c1.y,c2.x,c2.y,e.x,e.y);
-  c1=p(.70,.14);c2=p(.64,.05);e=p(.64,0);s.bezierCurveTo(c1.x,c1.y,c2.x,c2.y,e.x,e.y);s.lineTo(x2,y2)}
+    // ═══════════════ RENDERER ═══════════════
+    const cvs = document.createElement('canvas');
+    cvs.style.touchAction = 'none';
+    document.body.appendChild(cvs);
+    cvs.addEventListener('pointerdown', onDown);
+    cvs.addEventListener('pointermove', onMove);
+    cvs.addEventListener('pointerup', onUp);
+    cvs.addEventListener('contextmenu', e => { e.preventDefault(); onCtx(e) });
+    document.addEventListener('keydown', onKey);
 
-function mkShape(c,r){const hw=PW/2,hh=PH/2,tb=getTabs(c,r),s=new THREE.Shape();
-  s.moveTo(-hw,-hh);jE(s,-hw,-hh,hw,-hh,tb.bottom);jE(s,hw,-hh,hw,hh,tb.right);
-  jE(s,hw,hh,-hw,hh,tb.top);jE(s,-hw,hh,-hw,-hh,tb.left);return s}
+    const Renderer = new THREE.WebGLRenderer({ canvas: cvs, antialias: true, powerPreference: 'high-performance' });
+    Renderer.setSize(innerWidth, innerHeight);
+    // iPhone 17 Pro: A19 Pro GPU handles 3x pixel ratio (Super Retina XDR ProMotion)
+    Renderer.setPixelRatio(isHighEndApple ? Math.min(devicePixelRatio, 3) : Math.min(devicePixelRatio, 2));
+    Renderer.setClearColor(0x131118);
+    Renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    Renderer.toneMappingExposure = 1.08; // Slightly brighter for OLED display
 
-function fixUV(geo,c,r){const p=geo.getAttribute('position'),u=geo.getAttribute('uv'),n=geo.getAttribute('normal');
-  for(let i=0;i<p.count;i++)if(Math.abs(n.getZ(i))>.5)u.setXY(i,(p.getX(i)/PW+.5)/COLS+c/COLS,(p.getY(i)/PH+.5)/ROWS+r/ROWS);
-  u.needsUpdate=true}
+    const scene = new THREE.Scene();
+    const cam = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, .1, 300);
+    // iPhone 17 Pro: 6.3" screen — pull camera a bit closer for better view
+    cam.position.set(0, 0, isHighEndApple ? 65 : isMobile ? 78 : 68);
 
-// ═══════════════ CREATE PIECES ═══════════════
-const img=genImage();
-const tex=new THREE.CanvasTexture(img);
-tex.colorSpace=THREE.SRGBColorSpace;
-tex.minFilter=THREE.LinearFilter;
-const rc=document.getElementById('refCvs');rc.width=isMobile?220:330;rc.height=isMobile?176:264;
-rc.getContext('2d').drawImage(img,0,0,rc.width,rc.height);
-const extO={depth:DEPTH,bevelEnabled:false,curveSegments:6,steps:1};
+    const ctrl = new OrbitControls(cam, cvs);
+    ctrl.enableDamping = true;
+    ctrl.dampingFactor = .10;          // más amortiguación = movimiento más suave
+    ctrl.maxDistance = 130; ctrl.minDistance = 8;
+    // Restricciones de pan para que el tablero nunca se pierda
+    ctrl.maxPolarAngle = Math.PI * 0.62;
+    ctrl.minPolarAngle = Math.PI * 0.18;
+    ctrl.touches = { ONE: THREE.TOUCH.ROTATE, TWO: THREE.TOUCH.DOLLY_PAN };
+    // Gestos más lentos y suaves para no perder el tablero
+    ctrl.rotateSpeed = isMobile ? 0.38 : 0.55;
+    ctrl.panSpeed   = isMobile ? 0.50 : 0.70;
+    ctrl.zoomSpeed  = 0.7;
+    // Limitar cuánto puede desplazarse la cámara del centro
+    ctrl.target.set(0, 0, 0);
 
-async function createPieces(){
-  const bar=document.getElementById('loadBar'),stat=document.getElementById('loadStatus');let n=0;
-  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
-    const geo=new THREE.ExtrudeGeometry(mkShape(c,r),extO);fixUV(geo,c,r);
-    
-    // Natural PBR material preserving pure original texture colors
-    const mat=new THREE.MeshStandardMaterial({
-      map:tex,
-      roughness:0.32,
-      metalness:0.02,
-      side:THREE.DoubleSide
+    // ═══════════════ NATURAL & BALANCED LIGHTING ═══════════════
+    const ambLight = new THREE.AmbientLight(0xfff7ed, 0.95);
+    scene.add(ambLight);
+    const hemiLight = new THREE.HemisphereLight(0xffedd5, 0x3b2d42, 0.45);
+    scene.add(hemiLight);
+
+    const dl1 = new THREE.DirectionalLight(0xffffff, 0.85); dl1.position.set(25, 30, 55); scene.add(dl1);
+    const dl2 = new THREE.DirectionalLight(0xffeedd, 0.4); dl2.position.set(-20, -25, 45); scene.add(dl2);
+
+    // Subtle warm atmospheric lights
+    const orbitL1 = new THREE.PointLight(0xfb923c, 1.8, 65); scene.add(orbitL1);
+    const orbitL2 = new THREE.PointLight(0xf472b6, 1.5, 55); scene.add(orbitL2);
+
+    // Proximity feedback light
+    const proxLight = new THREE.PointLight(0xf97316, 0, 14); proxLight.position.z = 1.5; scene.add(proxLight);
+
+    // ═══════════════ SCENE OBJECTS ═══════════════
+    // Table
+    scene.add(new THREE.Mesh(new THREE.PlaneGeometry(280, 230),
+      new THREE.MeshStandardMaterial({ color: 0x120f18, roughness: 0.9, metalness: 0.02 })).translateZ(-DEPTH - .02));
+
+    // Board glow canvas
+    const GW = 256, GH = 200;
+    const glowCvs = document.createElement('canvas'); glowCvs.width = GW; glowCvs.height = GH;
+    const glowCtx = glowCvs.getContext('2d');
+    glowCtx.fillStyle = 'rgba(0,0,0,0)'; glowCtx.clearRect(0, 0, GW, GH);
+    const glowTex = new THREE.CanvasTexture(glowCvs);
+    const glowMesh = new THREE.Mesh(new THREE.PlaneGeometry(PZW + 6, PZH + 6),
+      new THREE.MeshBasicMaterial({ map: glowTex, transparent: true, opacity: .7, blending: THREE.AdditiveBlending, depthWrite: false }));
+    glowMesh.position.z = -DEPTH + .005; scene.add(glowMesh);
+
+    // Frame base
+    const frm = new THREE.Mesh(new THREE.PlaneGeometry(PZW, PZH),
+      new THREE.MeshBasicMaterial({ color: 0x1e1828, transparent: true, opacity: .7 }));
+    frm.position.z = -DEPTH + .001; scene.add(frm);
+
+    // Frame border
+    const frmGlowMat = new THREE.LineBasicMaterial({ color: 0xfb923c, transparent: true, opacity: 0.2 });
+    const frmGlow = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.PlaneGeometry(PZW + .5, PZH + .5)), frmGlowMat);
+    frmGlow.position.z = -DEPTH + .015; scene.add(frmGlow);
+    const frmBorder = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.PlaneGeometry(PZW + .3, PZH + .3)),
+      new THREE.LineBasicMaterial({ color: 0x4c3755 }));
+    frmBorder.position.z = -DEPTH + .01; scene.add(frmBorder);
+
+    // ── Subtle atmospheric particles ──
+    const AH = 60, ahPos = new Float32Array(AH * 3), ahVel = [];
+    for (let i = 0; i < AH; i++) {
+      ahPos[i * 3] = (Math.random() - .5) * 200; ahPos[i * 3 + 1] = (Math.random() - .5) * 160; ahPos[i * 3 + 2] = -5 - Math.random() * 30;
+      ahVel.push({ x: (Math.random() - .5) * .02, y: .01 + Math.random() * .025 })
+    }
+    const ahGeo = new THREE.BufferGeometry();
+    ahGeo.setAttribute('position', new THREE.Float32BufferAttribute(ahPos, 3));
+    scene.add(new THREE.Points(ahGeo, new THREE.PointsMaterial({ color: 0xfb923c, size: .45, transparent: true, opacity: .25 })));
+
+    // ── Firefly particles ──
+    const FF = 60, ffPos = new Float32Array(FF * 3), ffVel = [];
+    for (let i = 0; i < FF; i++) {
+      ffPos[i * 3] = (Math.random() - .5) * PZW * 1.8; ffPos[i * 3 + 1] = (Math.random() - .5) * PZH * 1.8; ffPos[i * 3 + 2] = .5 + Math.random() * 4;
+      ffVel.push({ vx: (Math.random() - .5) * .18, vy: (Math.random() - .5) * .18, ph: Math.random() * Math.PI * 2, sp: .4 + Math.random() * 1.2 })
+    }
+    const ffGeo = new THREE.BufferGeometry(); ffGeo.setAttribute('position', new THREE.Float32BufferAttribute(ffPos, 3));
+    const ffMat = new THREE.PointsMaterial({ color: 0xfde68a, size: .3, transparent: true, opacity: .6, blending: THREE.AdditiveBlending, depthWrite: false });
+    scene.add(new THREE.Points(ffGeo, ffMat));
+
+    // ── Snap sparkle pool (200 particles) ──
+    const SP = 200, spPos = new Float32Array(SP * 3), spCol = new Float32Array(SP * 3), spD = [];
+    for (let i = 0; i < SP; i++) { spPos[i * 3 + 2] = -200; spCol[i * 3] = 1; spCol[i * 3 + 1] = .5; spCol[i * 3 + 2] = .7; spD.push({ vx: 0, vy: 0, vz: 0, life: 0, spin: 0 }) }
+    const spGeo = new THREE.BufferGeometry();
+    spGeo.setAttribute('position', new THREE.BufferAttribute(spPos, 3));
+    spGeo.setAttribute('color', new THREE.BufferAttribute(spCol, 3));
+    const spMat = new THREE.PointsMaterial({
+      size: .38, vertexColors: true, transparent: true, opacity: .98,
+      blending: THREE.AdditiveBlending, depthWrite: false
     });
-    
-    const m=new THREE.Mesh(geo,mat);
-    const tx=(c-(COLS-1)/2)*PW,ty=(r-(ROWS-1)/2)*PH;
-    m.userData={col:c,row:r,tx,ty,placed:false,isEdge:c===0||c===COLS-1||r===0||r===ROWS-1,
-      isCorner:(c===0||c===COLS-1)&&(r===0||r===ROWS-1)};
-    const ang=Math.random()*Math.PI*2,d=PZW*.5+Math.random()*PZW*.6;
-    m.position.set(Math.cos(ang)*d,Math.sin(ang)*d,0);
-    m.rotation.z=[0,Math.PI/2,Math.PI,Math.PI*1.5][Math.random()*4|0];
-    scene.add(m);pieces.push(m);n++;
-    if(n%10===0){bar.style.width=(n/TOTAL*100)+'%';stat.textContent=`Creando pieza ${n} de ${TOTAL}... 💕`;
-      await new Promise(r2=>setTimeout(r2,0))}}
-  bar.style.width='100%';stat.textContent='¡Todo listo! 💖';
-  setTimeout(()=>{document.getElementById('loading').classList.add('hidden');t0=Date.now();
-    if(isMobile)showToast('Toca una pieza · Arrastra · Doble toque = Rotar',4000)},500)}
+    scene.add(new THREE.Points(spGeo, spMat));
 
-// ═══════════════ CELEBRATION PARTICLES ═══════════════
-const CB_H=300,CB_S=450,CB_P=200;
-let cbhPts,cbsPts,cbpPts;
-const cbhPos=new Float32Array(CB_H*3),cbhCol=new Float32Array(CB_H*3),cbhD=[];
-const cbsPos=new Float32Array(CB_S*3),cbsCol=new Float32Array(CB_S*3),cbsD=[];
-const cbpPos=new Float32Array(CB_P*3),cbpCol=new Float32Array(CB_P*3),cbpD=[];
-
-function initCeleb(){
-  for(let i=0;i<CB_H;i++){const th=Math.random()*Math.PI*2,ph=Math.acos(2*Math.random()-1),sp=10+Math.random()*22;
-    cbhPos[i*3]=0;cbhPos[i*3+1]=0;cbhPos[i*3+2]=-200;
-    const c=[[1,.45,.25],[.95,.2,.35],[1,.7,.4],[1,.5,.6],[.9,.15,.25]][Math.random()*5|0];
-    cbhCol[i*3]=c[0];cbhCol[i*3+1]=c[1];cbhCol[i*3+2]=c[2];
-    cbhD.push({vx:Math.sin(ph)*Math.cos(th)*sp,vy:Math.sin(ph)*Math.sin(th)*sp,vz:Math.abs(Math.cos(ph))*sp*.4+3.5,delay:Math.random()*.6,life:4+Math.random()*3})}
-  for(let i=0;i<CB_S;i++){cbsPos[i*3]=(Math.random()-.5)*PZW*1.5;cbsPos[i*3+1]=PZH*.6+Math.random()*25;cbsPos[i*3+2]=-200;
-    const g2=.8+Math.random()*.2;cbsCol[i*3]=1;cbsCol[i*3+1]=g2;cbsCol[i*3+2]=.35+Math.random()*.3;
-    cbsD.push({vx:(Math.random()-.5)*.8,vy:-3-Math.random()*4,vz:(Math.random()-.5)*.4,delay:.5+Math.random()*3.5,life:5+Math.random()*4})}
-  for(let i=0;i<CB_P;i++){cbpPos[i*3]=(Math.random()-.5)*PZW*2;cbpPos[i*3+1]=PZH*.5+Math.random()*20;cbpPos[i*3+2]=-200;
-    const p=[[1,.8,.85],[.95,.45,.6],[1,.6,.7],[.98,.75,.8]][Math.random()*4|0];
-    cbpCol[i*3]=p[0];cbpCol[i*3+1]=p[1];cbpCol[i*3+2]=p[2];
-    cbpD.push({vx:(Math.random()-.5)*1.5,vy:-1-Math.random()*2,vz:(Math.random()-.5)*.3,sway:Math.random()*Math.PI*2,swSpd:1+Math.random()*2,delay:.3+Math.random()*2,life:7+Math.random()*5})}
-  function mkPts(pos,col,sz,op){const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(pos,3));
-    g.setAttribute('color',new THREE.BufferAttribute(col,3));
-    return new THREE.Points(g,new THREE.PointsMaterial({size:sz,vertexColors:true,transparent:true,opacity:op,blending:THREE.AdditiveBlending,depthWrite:false}))}
-  cbhPts=mkPts(cbhPos,cbhCol,.65,.95);cbsPts=mkPts(cbsPos,cbsCol,.3,.9);cbpPts=mkPts(cbpPos,cbpCol,.5,.85);
-  [cbhPts,cbsPts,cbpPts].forEach(p=>{p.visible=false;scene.add(p)})}
-initCeleb();
-
-function startCeleb(){
-  celebActive=true;celebT0=performance.now()/1000;camStartPos.copy(cam.position);ctrl.enabled=false;
-  for(let i=0;i<CB_H;i++){cbhPos[i*3]=0;cbhPos[i*3+1]=0;cbhPos[i*3+2]=1}
-  cbhPts.geometry.attributes.position.needsUpdate=true;cbhPts.visible=true;cbsPts.visible=true;cbpPts.visible=true;
-  
-  // Show 3D Heart Mesh in center
-  heart3DMesh.visible = true;
-  heart3DMesh.position.set(0, 0, 4);
-
-  // Board illumination
-  glowCtx.fillStyle='rgba(251,146,60,.3)';glowCtx.fillRect(0,0,GW,GH);glowTex.needsUpdate=true;
-  ambLight.intensity=1.35;
-  playWinRomanticMusic();
-  triggerHaptic();
-  setTimeout(showWinScreen,3800);
-}
-
-function updateCeleb(el,dt){
-  const ct=Math.min(el/3,1),ease=1-Math.pow(1-ct,3);
-  cam.position.lerpVectors(camStartPos,new THREE.Vector3(3.5*Math.sin(el*.2),-2,isMobile?48:42),ease);cam.lookAt(0,0,0);
-
-  // 3D Romantic Heart Animation in scene
-  if(heart3DMesh.visible) {
-    const heartScale = Math.min(el * 0.85, 1.35) * (1 + Math.sin(el * 3.5) * 0.08);
-    heart3DMesh.scale.set(heartScale, heartScale, heartScale);
-    heart3DMesh.rotation.z = Math.sin(el * 1.5) * 0.15;
-    heart3DMesh.rotation.y = Math.sin(el * 2) * 0.35;
-    heart3DMat.opacity = Math.min(el * 0.5, 0.9);
-  }
-
-  // Piece wave illumination
-  if(el>.2&&el<5.5){const wf=(el-.2)*12;
-    pieces.forEach(p=>{if(!p.userData.placed)return;const d=Math.sqrt(p.userData.tx**2+p.userData.ty**2),w=(wf-d)/6;
-      if(w>0&&w<1){const i=Math.sin(w*Math.PI);p.material.emissive.setRGB(i*.35,i*.15,i*.08);p.material.emissiveIntensity=1+i}
-      else if(w>=1&&w<2){const f=1-(w-1);p.material.emissive.setRGB(f*.1,f*.03,f*.01)}
-      else p.material.emissive.setHex(0)})}
-  for(let i=0;i<CB_H;i++){const d=cbhD[i];if(el<d.delay){cbhPos[i*3+2]=-200;continue}
-    if(el-d.delay>d.life){cbhPos[i*3+2]=-200;continue}
-    cbhPos[i*3]+=d.vx*dt;cbhPos[i*3+1]+=d.vy*dt;cbhPos[i*3+2]+=d.vz*dt;d.vx*=.98;d.vy*=.98;d.vz-=dt*1.5;d.vy+=dt*.4}
-  cbhPts.geometry.attributes.position.needsUpdate=true;cbhPts.material.opacity=Math.max(0,1-Math.max(0,el-3)/3.5);
-  for(let i=0;i<CB_S;i++){const d=cbsD[i];if(el<d.delay){cbsPos[i*3+2]=-200;continue}
-    if(el-d.delay>d.life){cbsPos[i*3+2]=-200;continue}
-    cbsPos[i*3]+=d.vx*dt;cbsPos[i*3+1]+=d.vy*dt;cbsPos[i*3+2]+=d.vz*dt;d.vx+=(Math.random()-.5)*.08}
-  cbsPts.geometry.attributes.position.needsUpdate=true;cbsPts.material.opacity=Math.max(0,1-Math.max(0,el-5)/3);
-  for(let i=0;i<CB_P;i++){const d=cbpD[i];if(el<d.delay){cbpPos[i*3+2]=-200;continue}
-    if(el-d.delay>d.life){cbpPos[i*3+2]=-200;continue}
-    cbpPos[i*3]+=(d.vx+Math.sin((el-d.delay)*d.swSpd+d.sway)*.5)*dt;cbpPos[i*3+1]+=d.vy*dt;cbpPos[i*3+2]+=d.vz*dt}
-  cbpPts.geometry.attributes.position.needsUpdate=true;cbpPts.material.opacity=Math.max(0,1-Math.max(0,el-6)/3.5);
-  orbitL1.intensity=2.8+Math.sin(el*4)*1.2;orbitL2.intensity=2.2+Math.cos(el*3.5)*1.0}
-
-function showWinScreen(){
-  const win=document.getElementById('win');
-
-  // —— Aurora background bands ——
-  const aurora=document.getElementById('winAurora');
-  const aurColors=[
-    'linear-gradient(90deg,rgba(244,114,182,.0),rgba(251,113,133,.7),rgba(244,114,182,.0))',
-    'linear-gradient(90deg,rgba(253,186,116,.0),rgba(251,146,60,.6),rgba(253,186,116,.0))',
-    'linear-gradient(90deg,rgba(167,139,250,.0),rgba(196,181,253,.5),rgba(167,139,250,.0))',
-    'linear-gradient(90deg,rgba(253,164,175,.0),rgba(251,207,232,.55),rgba(253,164,175,.0))'
-  ];
-  aurColors.forEach((bg,i)=>{
-    const b=document.createElement('div');b.className='aurora-band';
-    b.style.cssText=`background:${bg};top:${15+i*22}%;animation-duration:${5+i*2.5}s;animation-delay:${i*.8}s`;
-    aurora.appendChild(b);
-  });
-
-  // —— Floating emojis ——
-  const emojis=['💕','💖','🌅','💗','💝','💘','❤️','🌹','✨','💫','🌸','💐','🥀','🫶','❣️','💓',
-                '🩷','💟','🎀','🌺','🦋','💞','💌','🫀','🌷','🌟','🍓'];
-  for(let i=0;i<55;i++){
-    const el=document.createElement('div');el.className='float-emoji';
-    el.textContent=emojis[Math.random()*emojis.length|0];el.style.left=Math.random()*100+'%';
-    el.style.animationDelay=Math.random()*10+'s';el.style.animationDuration=(5+Math.random()*8)+'s';
-    el.style.fontSize=(1+Math.random()*2.5)+'em';win.appendChild(el);}
-
-  // —— Sparkle rings ——
-  for(let i=0;i<5;i++){
-    const ring=document.createElement('div');ring.className='sparkle-ring';
-    ring.style.cssText=`animation-delay:${i*.9}s;border-color:rgba(${i%2===0?'254,164,200':'253,224,71'},.45);border-width:${1+i*.5}px`;
-    win.querySelector('.win-bg').appendChild(ring);}
-
-  // —— Time display ——
-  const s=Math.floor((Date.now()-t0)/1000);
-  document.getElementById('winTime').textContent=`⏱ Tiempo: ${s/60|0} min ${s%60} seg`;
-
-  // —— Geraldine name letter-by-letter glow ——
-  const nameEl=document.getElementById('winName');
-  const nameStr='Geraldine';
-  nameStr.split('').forEach((ch,i)=>{
-    const sp=document.createElement('span');
-    sp.textContent=ch;
-    sp.style.animationDelay=`${.9+i*.11}s`;
-    nameEl.appendChild(sp);
-  });
-
-  // —— Cycling love messages for Geraldine ——
-  const loveMessages=[
-    'Geraldine, eres la pieza que faltaba en mi vida 💕',
-    'Te amo más de lo que las palabras pueden decir, mi amor 🌹',
-    'Cada día contigo es el más hermoso de mi vida ✨',
-    'Eres mi atardecer favorito, mi cielo, mi todo 🌅',
-    'Geraldine, sin ti mi mundo no tiene colores 💖',
-    'Eres la razón de mis sonrisas más sinceras 🌸',
-    'Mi corazón late solo para ti, Geraldine ❤️',
-    'Contigo, hasta el tiempo se detiene de lo bonito que es 💫',
-    'Eres mi mayor tesoro y el amor de mi vida 💝',
-    'Gracias por existir y por ser tan perfecta para mí 🫶',
-    'Te amaré hoy, mañana y siempre, Geraldine 💞',
-    'Eres mi paz, mi alegría y mi hogar 🏡💕'
-  ];
-  let msgIdx=0;
-  const msgEl=document.getElementById('loveMsg');
-  function showNextMsg(){
-    msgEl.style.opacity='0';
-    msgEl.style.transform='translateY(15px)';
-    setTimeout(()=>{
-      msgEl.textContent=loveMessages[msgIdx];
-      msgEl.style.transition='opacity .7s ease, transform .7s ease';
-      msgEl.style.opacity='1';
-      msgEl.style.transform='translateY(0)';
-      msgIdx=(msgIdx+1)%loveMessages.length;
-    },400);
-  }
-  setTimeout(()=>{
-    showNextMsg();
-    setInterval(showNextMsg,3800);
-  },2200);
-
-  win.classList.add('visible');
-}
-
-// ═══════════════ INTERACTION ═══════════════
-function updMouse(e){mouse.x=(e.clientX/innerWidth)*2-1;mouse.y=-(e.clientY/innerHeight)*2+1}
-
-function onDown(e){
-  if(e.button!==0||!t0||celebActive)return;
-  getAudio();
-  const now=Date.now();const dblTap=now-lastTap<320;lastTap=now;
-  downPos={x:e.clientX,y:e.clientY};updMouse(e);ray.setFromCamera(mouse,cam);
-  if(dblTap&&sel&&!sel.userData.placed){e.stopImmediatePropagation();sel.rotation.z+=Math.PI/2;checkSnap(sel);
-    if(isMobile)showToast('Pieza rotada 🔄',800);return}
-  const hits=ray.intersectObjects(pieces.filter(p=>!p.userData.placed));
-  if(hits.length>0){e.stopImmediatePropagation();const p=hits[0].object;selectPiece(p);
-    ctrl.enabled=false;dragging=true;p.position.z=.45;
-    dragPlane.set(new THREE.Vector3(0,0,1),-.45);
-    const pt=new THREE.Vector3();ray.ray.intersectPlane(dragPlane,pt);
-    dragOff.subVectors(p.position,pt);cvs.style.cursor='grabbing'}}
-
-function onMove(e){
-  if(!dragging||!sel)return;e.stopImmediatePropagation();updMouse(e);ray.setFromCamera(mouse,cam);
-  const pt=new THREE.Vector3();
-  if(ray.ray.intersectPlane(dragPlane,pt)){sel.position.x=pt.x+dragOff.x;sel.position.y=pt.y+dragOff.y;
-    // Proximity guidance
-    const dx=sel.position.x-sel.userData.tx,dy=sel.position.y-sel.userData.ty;
-    const dist=Math.sqrt(dx*dx+dy*dy),proxR=SNAP_D*4.5;
-    if(dist<proxR){const inten=1-dist/proxR;
-      sel.material.emissive.setRGB(.25*inten, .12*inten, .04*inten);
-      sel.material.emissiveIntensity=1+inten;
-      proxLight.position.set(sel.userData.tx,sel.userData.ty,1.5);proxLight.intensity=inten*3.0;
-    }else{sel.material.emissive.setHex(0x221528);sel.material.emissiveIntensity=1;proxLight.intensity=0}}}
-
-function onUp(e){
-  if(e.button===0&&dragging&&sel){e.stopImmediatePropagation();sel.position.z=0;proxLight.intensity=0;
-    checkSnap(sel);dragging=false;ctrl.enabled=true;cvs.style.cursor='default'}
-  else if(e.button===0&&downPos&&!dragging){const dx=e.clientX-downPos.x,dy=e.clientY-downPos.y;
-    if(Math.sqrt(dx*dx+dy*dy)<8)deselectPiece()}
-  downPos=null}
-
-function onCtx(e){if(!t0||celebActive)return;
-  if(!sel){updMouse(e);ray.setFromCamera(mouse,cam);const h=ray.intersectObjects(pieces.filter(p=>!p.userData.placed));
-    if(h.length)selectPiece(h[0].object)}
-  if(sel&&!sel.userData.placed){sel.rotation.z+=Math.PI/2;checkSnap(sel)}}
-
-function onKey(e){if(!t0||celebActive)return;
-  if(sel&&!sel.userData.placed){if(e.key==='r'||e.key==='R'){sel.rotation.z+=Math.PI/2;checkSnap(sel)}
-    if(e.key==='e'||e.key==='E'){sel.rotation.z-=Math.PI/2;checkSnap(sel)}}
-  if(e.key==='Escape')deselectPiece()}
-
-function selectPiece(p){if(sel&&sel!==p)deselectPiece();sel=p;sel.material.emissive.setHex(0x331c38);sel.material.emissiveIntensity=1.2}
-function deselectPiece(){if(sel&&!sel.userData.placed){sel.material.emissive.setHex(0);sel.material.emissiveIntensity=0;
-    if(edgeHL&&sel.userData.isEdge)sel.material.emissive.setHex(sel.userData.isCorner?0x4a1820:0x2a2205)}sel=null}
-
-// ── Romantic snap effect (all layers) ──
-function romanticSnap(p){
-  const px=p.userData.tx, py=p.userData.ty;
-  const prog=placedN/TOTAL;  // 0→1 as puzzle fills
-  const intensity=0.6+prog*1.4;
-
-  // iPhone 17 Pro has A19 Pro GPU — use full desktop-quality effects.
-  // Only reduce on lower-end mobile.
-  const mobScale = isHighEndApple ? 1.0 : (isMobile ? 0.45 : 1.0);
-
-  // 1. Board glow + love wave
-  addBoardGlow(p.userData.col,p.userData.row);
-  addLoveWave(px,py,intensity);
-
-  // 2. Spiral particle fountain (full quality on iPhone 17 Pro)
-  const partCount=Math.round((18+prog*50)*mobScale);
-  emitSnap(px,py,partCount,true);
-  setTimeout(()=>emitSnap(px,py,Math.round((10+prog*24)*mobScale),false),90);
-
-  // 3. Expanding romantic rings
-  emitSnapRing(px,py,intensity);
-  setTimeout(()=>emitSnapRing(px,py,intensity*.7),130);
-  if(prog>.2)setTimeout(()=>emitSnapRing(px,py,intensity*.48),280);
-  if(isHighEndApple&&prog>.5)setTimeout(()=>emitSnapRing(px,py,intensity*.3),420);
-
-  // 4. Mini 3D heart burst (full on iPhone 17 Pro)
-  const heartCount=Math.round((1+prog*7)*mobScale);
-  emitMiniHearts(px,py,Math.max(1,heartCount));
-
-  // 5. HTML love-word pop (project 3D → screen)
-  const v=new THREE.Vector3(px,py,.5);
-  v.project(cam);
-  const sx=(v.x*.5+.5)*innerWidth;
-  const sy=(1-(v.y*.5+.5))*innerHeight;
-  // Only show if piece is on screen
-  if(sx>0&&sx<innerWidth&&sy>0&&sy<innerHeight){
-    const freeSlot=loveWordPool.find(s=>s.free);
-    if(freeSlot){
-      const el=freeSlot.el;
-      freeSlot.free=false;
-      el.textContent=LOVE_WORDS[Math.floor(Math.random()*LOVE_WORDS.length)];
-      const hue=Math.random()*60;
-      // iPhone 17 Pro: larger, punchier text on the big 6.3" OLED
-      const fs=isHighEndApple
-        ? (1.3+prog*.7+Math.random()*.4).toFixed(2)
-        : isMobile
-          ? (1.1+prog*.5+Math.random()*.3).toFixed(2)
-          : (0.9+prog*.8+Math.random()*.5).toFixed(2);
-      el.style.left=sx+'px';
-      el.style.top=(sy-14)+'px';
-      el.style.fontSize=fs+'em';
-      el.style.color=`hsl(${340+hue},100%,80%)`;
-      el.style.textShadow=`0 0 20px hsl(${340+hue},100%,65%),0 2px 10px rgba(0,0,0,.6)`;
-      el.classList.remove('snap-pop');
-      void el.offsetWidth;
-      el.classList.add('snap-pop');
-      setTimeout(()=>{el.classList.remove('snap-pop');freeSlot.free=true;},1600);
+    function emitSnap(px, py, count, spiralMode) {
+      let n = 0;
+      for (let i = 0; i < SP && n < count; i++) {
+        if (spD[i].life <= 0) {
+          spPos[i * 3] = px; spPos[i * 3 + 1] = py; spPos[i * 3 + 2] = .35;
+          let a, s;
+          if (spiralMode) {
+            // Spiral burst: evenly spaced angles
+            a = (n / count) * Math.PI * 2 + Math.random() * .4;
+            s = 3 + Math.random() * 9;
+          } else {
+            a = Math.random() * Math.PI * 2;
+            s = 2 + Math.random() * 7;
+          }
+          spD[i].vx = Math.cos(a) * s; spD[i].vy = Math.sin(a) * s; spD[i].vz = 2 + Math.random() * 6;
+          spD[i].spin = (Math.random() - .5) * 8;
+          spD[i].life = .7 + Math.random() * .8;
+          const palettes = [[1, .82, .4], [1, .48, .3], [.95, .3, .48], [1, .92, .6], [.88, .55, .82], [1, .75, .85], [.95, .88, .3]];
+          const c = palettes[Math.random() * palettes.length | 0];
+          spCol[i * 3] = c[0]; spCol[i * 3 + 1] = c[1]; spCol[i * 3 + 2] = c[2]; n++
+        }
+      }
+      spGeo.attributes.position.needsUpdate = true; spGeo.attributes.color.needsUpdate = true
     }
-  }
 
-  // 6. DOM burst circle
-  const burst=document.createElement('div');
-  burst.className='snap-burst';
-  const bSize=isMobile
-    ? Math.round(44+prog*70)
-    : Math.round(60+prog*120);
-  burst.style.left=sx+'px';
-  burst.style.top=sy+'px';
-  burst.style.width=bSize+'px';
-  burst.style.height=bSize+'px';
-  burst.style.background='radial-gradient(circle,rgba(251,113,133,.6) 0%,rgba(244,114,182,.3) 40%,transparent 70%)';
-  document.body.appendChild(burst);
-  setTimeout(()=>burst.remove(),750);
-
-  // 7. Piece emissive pulse
-  p.material.emissive.setRGB(.55,.22,.35);p.material.emissiveIntensity=2.5;
-  setTimeout(()=>{if(p.userData.placed){p.material.emissive.setRGB(.25,.1,.04);p.material.emissiveIntensity=1.2}},200);
-  setTimeout(()=>{if(p.userData.placed){p.material.emissive.setHex(0);p.material.emissiveIntensity=0}},600);
-
-  // 8. Camera micro-bump — enabled on iPhone 17 Pro (stable gyro/display)
-  if(!dragging&&(!isMobile||isHighEndApple)){
-    const camOrig=cam.position.clone();
-    // Slightly gentler on phone to avoid motion sickness
-    const bumpAmt=isHighEndApple?(0.05+prog*.08):(0.08+prog*.12);
-    cam.position.x+=(Math.random()-.5)*bumpAmt;
-    cam.position.y+=(Math.random()-.5)*bumpAmt;
-    setTimeout(()=>{cam.position.lerp(camOrig,.75)},55);
-    setTimeout(()=>{cam.position.lerp(camOrig,.97)},110);
-  }
-
-  // 9. Milestone toasts — every 25 pieces on iPhone
-  if(placedN%100===0&&placedN<TOTAL)
-    showToast(`💕 ¡${placedN} piezas! ¡Sigue así, Geraldine! 🌹`,2200);
-  else if(placedN%25===0&&placedN<TOTAL)
-    showToast(`✨ ${placedN} piezas con amor 💖`,1400);
-
-  // 10. Sound + haptic + flash
-  playSnapSound();
-  triggerHaptic();
-  screenFlash();
-}
-
-function checkSnap(p){
-  const dx=p.position.x-p.userData.tx,dy=p.position.y-p.userData.ty;
-  let rot=p.rotation.z%(Math.PI*2);if(rot<0)rot+=Math.PI*2;
-  if(Math.sqrt(dx*dx+dy*dy)<SNAP_D&&(rot<SNAP_A||rot>Math.PI*2-SNAP_A)){
-    p.position.set(p.userData.tx,p.userData.ty,0);p.rotation.z=0;p.userData.placed=true;placedN++;
-    romanticSnap(p);
-    sel=null;proxLight.intensity=0;updHUD();
-    if(placedN===TOTAL)startCeleb();}}
-
-// ═══════════════ AUTO SOLVE DEMO ═══════════════
-function runAutoDemo() {
-  if (celebActive) return;
-  getAudio();
-  showToast('¡Completando rompecabezas mágico... ✨!', 2000);
-  let count = 0;
-  const unplaced = pieces.filter(p => !p.userData.placed);
-  const totalToPlace = unplaced.length;
-
-  const interval = setInterval(() => {
-    if (count >= totalToPlace || unplaced.length === 0) {
-      clearInterval(interval);
-      return;
+    // ── Snap ring pool (expanding romantic halos) ──
+    const SNAP_RINGS = 8;
+    const snapRings = [];
+    for (let i = 0; i < SNAP_RINGS; i++) {
+      const geo = new THREE.RingGeometry(.1, .22, 48);
+      const mat = new THREE.MeshBasicMaterial({
+        color: 0xfb7185, transparent: true, opacity: 0,
+        blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide
+      });
+      const mesh = new THREE.Mesh(geo, mat);
+      mesh.position.z = .3;
+      mesh.visible = false;
+      scene.add(mesh);
+      snapRings.push({ mesh, mat, life: -1, maxLife: 0, px: 0, py: 0, maxR: 0, col: 0xfb7185, ring2: null, mat2: null });
+      // Second ring (offset)
+      const geo2 = new THREE.RingGeometry(.05, .14, 48);
+      const mat2 = new THREE.MeshBasicMaterial({
+        color: 0xfde047, transparent: true, opacity: 0,
+        blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide
+      });
+      const mesh2 = new THREE.Mesh(geo2, mat2);
+      mesh2.position.z = .32; mesh2.visible = false;
+      scene.add(mesh2);
+      snapRings[i].ring2 = mesh2; snapRings[i].mat2 = mat2;
     }
-    const p = unplaced[count];
-    p.position.set(p.userData.tx, p.userData.ty, 0);
-    p.rotation.z = 0;
-    p.userData.placed = true;
-    placedN++;
-    addBoardGlow(p.userData.col, p.userData.row);
-    if (count % 12 === 0) {
-      emitSnap(p.userData.tx, p.userData.ty, 8);
+    let snapRingIdx = 0;
+
+    function emitSnapRing(px, py, intensity) {
+      const r = snapRings[snapRingIdx % SNAP_RINGS];
+      snapRingIdx++;
+      r.px = px; r.py = py;
+      r.mesh.position.set(px, py, .3); r.mesh.scale.set(.01, .01, 1); r.mesh.visible = true;
+      r.ring2.position.set(px, py, .32); r.ring2.scale.set(.01, .01, 1); r.ring2.visible = true;
+      const cols = [0xfb7185, 0xf472b6, 0xfbbf24, 0xa78bfa, 0xfda4af, 0xfde047];
+      const col = cols[Math.floor(Math.random() * cols.length)];
+      r.mat.color.setHex(col); r.mat2.color.setHex(cols[Math.floor(Math.random() * cols.length)]);
+      r.maxR = (5 + Math.random() * 7) * intensity;
+      r.maxLife = .9 + Math.random() * .5;
+      r.life = r.maxLife;
     }
-    updHUD();
-    count++;
-    if (placedN === TOTAL) {
-      clearInterval(interval);
-      setTimeout(startCeleb, 200);
+
+    // ── Mini snap heart pool (3D hearts burst on snap) ──
+    const MINI_H = 40, miniHearts = [];
+    const mhShape = new THREE.Shape();
+    mhShape.moveTo(0, .3); mhShape.bezierCurveTo(-.5, .8, -1.1, .3, -1.1, -.3);
+    mhShape.bezierCurveTo(-1.1, -.8, -.6, -1.2, 0, -1.75); mhShape.bezierCurveTo(.6, -1.2, 1.1, -.8, 1.1, -.3);
+    mhShape.bezierCurveTo(1.1, .3, .5, .8, 0, .3);
+    const mhGeo = new THREE.ShapeGeometry(mhShape, 8);
+    mhGeo.center();
+    const mhColors = [0xe11d48, 0xf472b6, 0xfb7185, 0xfbbf24, 0xfda4af];
+    for (let i = 0; i < MINI_H; i++) {
+      const mat = new THREE.MeshBasicMaterial({
+        color: mhColors[i % mhColors.length],
+        transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false
+      });
+      const mesh = new THREE.Mesh(mhGeo, mat);
+      mesh.scale.set(.001, .001, .001); mesh.visible = false;
+      scene.add(mesh);
+      miniHearts.push({ mesh, mat, life: -1, vx: 0, vy: 0, vz: 0, vrot: 0, spin: 0 });
     }
-  }, 10);
-}
+    let mhIdx = 0;
 
-// ═══════════════ UI ═══════════════
-function updHUD(){document.getElementById('placed').textContent=placedN;
-  document.getElementById('pct').textContent=(placedN/TOTAL*100|0)+'%'}
-function updTimer(){if(!t0||celebActive)return;const s=Math.floor((Date.now()-t0)/1000);
-  document.getElementById('timer').textContent=`${(s/60|0).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`}
-function showToast(msg,dur=2000){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
-  clearTimeout(t._tid);t._tid=setTimeout(()=>t.classList.remove('show'),dur)}
+    function emitMiniHearts(px, py, count) {
+      for (let n = 0; n < count; n++) {
+        const h = miniHearts[mhIdx % MINI_H]; mhIdx++;
+        const a = Math.random() * Math.PI * 2, spd = 2.5 + Math.random() * 6;
+        h.mesh.position.set(px, py, .5);
+        h.mesh.rotation.set(0, 0, Math.random() * Math.PI * 2);
+        h.mesh.scale.set(.18 + Math.random() * .18, .18 + Math.random() * .18, .18 + Math.random() * .18);
+        h.mesh.visible = true;
+        h.mat.opacity = .9;
+        h.mat.color.setHex(mhColors[Math.floor(Math.random() * mhColors.length)]);
+        h.vx = Math.cos(a) * spd; h.vy = Math.sin(a) * spd; h.vz = 2 + Math.random() * 5;
+        h.vrot = (Math.random() - .5) * 6; h.life = .8 + Math.random() * .9;
+      }
+    }
 
-// ═══════════════ SAVE / LOAD (localStorage) ═══════════════
-const SAVE_KEY='puzzle3d_save_v1';
+    // ── Love word overlay (HTML DOM pop-ups) ──
+    const LOVE_WORDS = ['❤️ Te Amo', '💕 Mi Amor', '🌹 Geraldine', '💝 Amor', '✨ Para Ti', '💖 Mi Vida', '💌 Te Quiero', '💞 Siempre', '💫 Eres Todo', '🌸 Mi Cielo', '💗 Sin Ti No'];
+    const loveWordPool = [];
+    for (let i = 0; i < 6; i++) {
+      const el = document.createElement('div');
+      el.className = 'snap-word';
+      document.body.appendChild(el);
+      loveWordPool.push({ el, free: true });
+    }
 
-function saveProgress(){
-  const elapsed=t0?Math.floor((Date.now()-t0)/1000):0;
-  const state={
-    placedN,
-    elapsed,
-    pieces:pieces.map(p=>({col:p.userData.col,row:p.userData.row,
-      px:p.position.x,py:p.position.y,pz:p.position.z,
-      rz:p.rotation.z,placed:p.userData.placed})),
-    hT:hT.map(col=>col.slice()),
-    vT:vT.map(col=>col.slice())
-  };
-  try{
-    localStorage.setItem(SAVE_KEY,JSON.stringify(state));
-    showToast('💾 Progreso guardado ✅',2000);
-    const btn=document.getElementById('btnSave');
-    btn.textContent='✅';
-    setTimeout(()=>{btn.textContent='💾'},1600);
-  }catch(e){showToast('⚠️ No se pudo guardar',2000)}
-}
+    // ═══════════════ 3D ROMANTIC HEART MESH (CELEBRATION) ═══════════════
+    const heartShape = new THREE.Shape();
+    const x0 = 0, y0 = 0;
+    heartShape.moveTo(x0, y0 + 1.2);
+    heartShape.bezierCurveTo(x0 - 2, y0 + 3.2, x0 - 4.5, y0 + 1.2, x0 - 4.5, y0 - 1.2);
+    heartShape.bezierCurveTo(x0 - 4.5, y0 - 3.2, x0 - 2.5, y0 - 4.8, x0, y0 - 7);
+    heartShape.bezierCurveTo(x0 + 2.5, y0 - 4.8, x0 + 4.5, y0 - 3.2, x0 + 4.5, y0 - 1.2);
+    heartShape.bezierCurveTo(x0 + 4.5, y0 + 1.2, x0 + 2, y0 + 3.2, x0, y0 + 1.2);
 
-function loadProgress(){
-  try{
-    const raw=localStorage.getItem(SAVE_KEY);
-    if(!raw)return false;
-    const state=JSON.parse(raw);
-    if(!state||!Array.isArray(state.pieces)||state.pieces.length!==TOTAL)return false;
+    const heart3DGeo = new THREE.ExtrudeGeometry(heartShape, { depth: 1.2, bevelEnabled: true, bevelSegments: 6, steps: 2, bevelSize: 0.6, bevelThickness: 0.6 });
+    heart3DGeo.center();
+    const heart3DMat = new THREE.MeshStandardMaterial({
+      color: 0xe11d48, emissive: 0xbe123c, emissiveIntensity: 0.5,
+      roughness: 0.2, metalness: 0.15, transparent: true, opacity: 0
+    });
+    const heart3DMesh = new THREE.Mesh(heart3DGeo, heart3DMat);
+    heart3DMesh.position.set(0, 0, 5);
+    heart3DMesh.scale.set(0.01, 0.01, 0.01);
+    heart3DMesh.visible = false;
+    scene.add(heart3DMesh);
 
-    // Restore elapsed time offset
-    t0=Date.now()-state.elapsed*1000;
-    placedN=0;
+    // ═══════════════ BOARD GLOW SYSTEM ═══════════════
+    function addBoardGlow(col, row) {
+      const cx = (col + .5) / COLS * GW, cy = (1 - (row + .5) / ROWS) * GH;
+      const r = GW / COLS * 3.2;
+      const g = glowCtx.createRadialGradient(cx, cy, 0, cx, cy, r);
+      g.addColorStop(0, 'rgba(251,146,60,.35)');
+      g.addColorStop(.3, 'rgba(244,114,182,.15)');
+      g.addColorStop(.6, 'rgba(225,29,72,.05)');
+      g.addColorStop(1, 'transparent');
+      glowCtx.fillStyle = g; glowCtx.fillRect(0, 0, GW, GH);
+      glowTex.needsUpdate = true;
+      frmGlowMat.opacity = Math.min(.75, 0.2 + placedN / TOTAL * .6);
+    }
 
-    const map={};
-    state.pieces.forEach(s=>{ map[s.col+'_'+s.row]=s; });
+    // ═══════════════ LOVE WAVE SYSTEM ═══════════════
+    function addLoveWave(x, y, intensity) {
+      loveWaves.push({ x, y, t0: performance.now() / 1000, dur: 2.0, maxR: 20, int: intensity || 1 })
+    }
 
-    pieces.forEach(p=>{
-      const s=map[p.userData.col+'_'+p.userData.row];
-      if(!s)return;
-      p.position.set(s.px,s.py,s.pz);
-      p.rotation.z=s.rz;
-      if(s.placed){
-        p.userData.placed=true;
+    function updateWaves(now) {
+      loveWaves = loveWaves.filter(w => now - w.t0 < w.dur + .4);
+      if (!loveWaves.length && !celebActive) return;
+      pieces.forEach(p => {
+        if (!p.userData.placed || p === sel) return;
+        let maxG = 0;
+        for (const w of loveWaves) {
+          const el = now - w.t0; if (el > w.dur) continue;
+          const dist = Math.sqrt((p.userData.tx - w.x) ** 2 + (p.userData.ty - w.y) ** 2);
+          const wf = (el / w.dur) * w.maxR, ww = 4.0, d = Math.abs(dist - wf);
+          if (d < ww) { const fade = 1 - el / w.dur; maxG = Math.max(maxG, (1 - d / ww) * fade * w.int) }
+        }
+        p.material.emissive.setRGB(maxG * .25, maxG * .1, maxG * .05);
+        p.material.emissiveIntensity = maxG * 1.2;
+      });
+    }
+
+    // ═══════════════ SCREEN FLASH ═══════════════
+    const flashEl = document.getElementById('flash');
+    function screenFlash() { flashEl.classList.add('on'); setTimeout(() => flashEl.classList.remove('on'), 90) }
+
+    // ═══════════════ REALISTIC ROMANTIC SUNSET PAINTING ═══════════════
+    function genImage() {
+      const c = document.createElement('canvas'); c.width = TW; c.height = TH; const x = c.getContext('2d');
+
+      // 1. SKY GRADIENT (Realistic golden-crimson-lavender sunset)
+      const skyH = TH * 0.62;
+      let skyGrad = x.createLinearGradient(0, 0, 0, skyH);
+      skyGrad.addColorStop(0.00, '#2d1b4e'); // Twilight indigo blue-purple
+      skyGrad.addColorStop(0.25, '#5c2d66'); // Deep dusk mauve
+      skyGrad.addColorStop(0.50, '#9e3d64'); // Rich sunset crimson
+      skyGrad.addColorStop(0.72, '#d9534f'); // Warm coral red
+      skyGrad.addColorStop(0.88, '#f39c12'); // Glowing golden amber
+      skyGrad.addColorStop(1.00, '#fef08a'); // Warm golden horizon light
+      x.fillStyle = skyGrad;
+      x.fillRect(0, 0, TW, skyH);
+
+      // 2. SUNSET SUN (Golden radiant orb on horizon)
+      const sunX = TW * 0.52, sunY = skyH * 0.82, sunR = 120;
+      let sunGlow = x.createRadialGradient(sunX, sunY, 10, sunX, sunY, sunR * 4);
+      sunGlow.addColorStop(0, 'rgba(255, 255, 240, 0.95)');
+      sunGlow.addColorStop(0.2, 'rgba(254, 240, 138, 0.7)');
+      sunGlow.addColorStop(0.5, 'rgba(251, 146, 60, 0.35)');
+      sunGlow.addColorStop(1, 'transparent');
+      x.fillStyle = sunGlow;
+      x.fillRect(sunX - sunR * 4, sunY - sunR * 4, sunR * 8, sunR * 8);
+
+      x.beginPath();
+      x.arc(sunX, sunY, sunR, 0, Math.PI * 2);
+      x.fillStyle = '#fffbeb';
+      x.fill();
+
+      // 3. REALISTIC CLOUD LAYERS (Volumetric sunset clouds)
+      function drawCloudLayer(y, height, color1, color2, count) {
+        for (let i = 0; i < count; i++) {
+          const cx = (i / count) * TW + (Math.random() - 0.5) * 200;
+          const cy = y + (Math.random() - 0.5) * 40;
+          const rx = 180 + Math.random() * 260;
+          const ry = height + Math.random() * 35;
+          let cg = x.createRadialGradient(cx, cy, 0, cx, cy, rx);
+          cg.addColorStop(0, color1);
+          cg.addColorStop(0.6, color2);
+          cg.addColorStop(1, 'transparent');
+          x.fillStyle = cg;
+          x.beginPath();
+          x.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+          x.fill();
+        }
+      }
+      drawCloudLayer(skyH * 0.25, 45, 'rgba(120, 50, 95, 0.5)', 'rgba(70, 30, 70, 0.2)', 10);
+      drawCloudLayer(skyH * 0.45, 55, 'rgba(217, 83, 79, 0.55)', 'rgba(150, 45, 75, 0.25)', 12);
+      drawCloudLayer(skyH * 0.68, 65, 'rgba(251, 146, 60, 0.65)', 'rgba(217, 83, 79, 0.3)', 14);
+
+      // 4. DISTANT MOUNTAIN / ISLAND SILHOUETTES
+      x.fillStyle = '#26122d';
+      x.beginPath();
+      x.moveTo(0, skyH);
+      x.lineTo(TW * 0.18, skyH - 55);
+      x.lineTo(TW * 0.32, skyH - 30);
+      x.lineTo(TW * 0.45, skyH - 70);
+      x.lineTo(TW * 0.60, skyH - 35);
+      x.lineTo(TW * 0.78, skyH - 80);
+      x.lineTo(TW * 0.92, skyH - 40);
+      x.lineTo(TW, skyH - 60);
+      x.lineTo(TW, skyH);
+      x.closePath();
+      x.fill();
+
+      // 5. CALM LAKE / SEA WATER (Reflecting the sunset)
+      const waterH = TH - skyH;
+      let waterGrad = x.createLinearGradient(0, skyH, 0, TH);
+      waterGrad.addColorStop(0.00, '#f59e0b'); // Golden water at horizon
+      waterGrad.addColorStop(0.15, '#c2410c'); // Deep orange
+      waterGrad.addColorStop(0.38, '#9f1239'); // Warm burgundy reflection
+      waterGrad.addColorStop(0.70, '#4c1d47'); // Deep violet-purple
+      waterGrad.addColorStop(1.00, '#1e1028'); // Dark reflective water near shore
+      x.fillStyle = waterGrad;
+      x.fillRect(0, skyH, TW, waterH);
+
+      // Golden Sun reflection on water
+      for (let y = skyH; y < TH; y += 4) {
+        const prog = (y - skyH) / waterH;
+        const spread = 70 + prog * 420;
+        const alpha = (1 - prog * 0.85) * (0.35 + Math.random() * 0.45);
+        x.fillStyle = `rgba(254, 240, 138, ${alpha})`;
+        const rx = sunX + (Math.random() - 0.5) * spread;
+        const rw = 20 + Math.random() * (120 * (1 - prog * 0.5));
+        x.fillRect(rx - rw / 2, y, rw, 2.5);
+      }
+
+      // Gentle water ripples across the lake
+      for (let i = 0; i < 400; i++) {
+        const ry = skyH + Math.random() * waterH;
+        const prog = (ry - skyH) / waterH;
+        const rx = Math.random() * TW;
+        const rw = 40 + Math.random() * 160 * (prog + 0.5);
+        x.fillStyle = `rgba(255, 180, 140, ${0.08 + Math.random() * 0.15})`;
+        x.fillRect(rx, ry, rw, 1.8);
+      }
+
+      // 6. WOODEN PIER / PROMONTORY WITH ROMANTIC COUPLE SILHOUETTE
+      // Wooden pier structure
+      const pierX = TW * 0.48, pierY = skyH + 80;
+      x.fillStyle = '#110a17';
+      x.beginPath();
+      x.moveTo(pierX - 80, TH);
+      x.lineTo(pierX - 35, pierY);
+      x.lineTo(pierX + 65, pierY);
+      x.lineTo(pierX + 110, TH);
+      x.closePath();
+      x.fill();
+
+      // Pier wood planks texture
+      for (let py = pierY; py < TH; py += 16) {
+        x.strokeStyle = 'rgba(255, 180, 130, 0.12)';
+        x.lineWidth = 2;
+        const t = (py - pierY) / (TH - pierY);
+        const x1 = (pierX - 35) - t * 45;
+        const x2 = (pierX + 65) + t * 45;
+        x.beginPath();
+        x.moveTo(x1, py);
+        x.lineTo(x2, py);
+        x.stroke();
+      }
+
+      // Pier posts / railings
+      x.strokeStyle = '#0d0713';
+      x.lineWidth = 6;
+      x.beginPath();
+      x.moveTo(pierX - 35, pierY); x.lineTo(pierX - 35, pierY - 45);
+      x.moveTo(pierX + 65, pierY); x.lineTo(pierX + 65, pierY - 45);
+      x.moveTo(pierX - 35, pierY - 35); x.lineTo(pierX + 65, pierY - 35);
+      x.stroke();
+
+      // Warm glowing lantern on the pier
+      const lanX = pierX + 65, lanY = pierY - 55;
+      let lanGlow = x.createRadialGradient(lanX, lanY, 2, lanX, lanY, 90);
+      lanGlow.addColorStop(0, 'rgba(254, 240, 138, 0.95)');
+      lanGlow.addColorStop(0.3, 'rgba(249, 115, 22, 0.6)');
+      lanGlow.addColorStop(1, 'transparent');
+      x.fillStyle = lanGlow;
+      x.fillRect(lanX - 90, lanY - 90, 180, 180);
+      x.fillStyle = '#fef08a';
+      x.beginPath(); x.arc(lanX, lanY, 7, 0, Math.PI * 2); x.fill();
+
+      // Romantic Couple Silhouette holding hands looking at sunset
+      const cx = pierX + 15, cy = pierY - 5;
+      x.fillStyle = '#0a050f';
+      // Male silhouette
+      x.beginPath();
+      x.arc(cx - 16, cy - 72, 11, 0, Math.PI * 2); // Head
+      x.fill();
+      x.beginPath();
+      x.moveTo(cx - 28, cy - 60);
+      x.lineTo(cx - 4, cy - 60);
+      x.lineTo(cx - 6, cy);
+      x.lineTo(cx - 26, cy);
+      x.closePath();
+      x.fill();
+
+      // Female silhouette leaning gently
+      x.beginPath();
+      x.arc(cx + 8, cy - 66, 10, 0, Math.PI * 2); // Head
+      x.fill();
+      x.beginPath();
+      x.moveTo(cx - 2, cy - 56);
+      x.lineTo(cx + 20, cy - 56);
+      x.lineTo(cx + 26, cy);
+      x.lineTo(cx + 2, cy);
+      x.closePath();
+      x.fill();
+
+      // Hair & dress curve
+      x.beginPath();
+      x.arc(cx + 12, cy - 60, 8, 0, Math.PI * 2);
+      x.fill();
+
+      // 7. BEAUTIFUL CHERRY BLOSSOM / ROSE TREE BRANCH OVERHANG
+      function drawBlossomBranch(startX, startY) {
+        x.strokeStyle = '#140a18';
+        x.lineWidth = 14;
+        x.beginPath();
+        x.moveTo(startX, startY);
+        x.bezierCurveTo(startX - 200, startY + 80, startX - 350, startY + 50, startX - 550, startY + 180);
+        x.stroke();
+        x.lineWidth = 8;
+        x.beginPath();
+        x.moveTo(startX - 200, startY + 80);
+        x.bezierCurveTo(startX - 300, startY + 160, startX - 380, startY + 220, startX - 450, startY + 280);
+        x.stroke();
+
+        // Blossoms / Petals on tree
+        const petalColors = ['#fbcfe8', '#f472b6', '#fda4af', '#fecdd3', '#fb7185', '#fff1f2'];
+        for (let i = 0; i < 350; i++) {
+          const px = startX - Math.random() * 650;
+          const py = startY + Math.random() * 320;
+          const col = petalColors[Math.random() * petalColors.length | 0];
+          x.fillStyle = col;
+          x.beginPath();
+          x.ellipse(px, py, 6 + Math.random() * 8, 4 + Math.random() * 6, Math.random() * Math.PI, 0, Math.PI * 2);
+          x.fill();
+        }
+      }
+      drawBlossomBranch(TW + 50, -20);
+      drawBlossomBranch(TW * 0.15, -40);
+
+      // 8. GENTLY FALLING PETALS IN THE BREEZE
+      for (let i = 0; i < 90; i++) {
+        const px = Math.random() * TW;
+        const py = Math.random() * TH;
+        x.fillStyle = Math.random() > 0.5 ? '#fbcfe8' : '#fda4af';
+        x.beginPath();
+        x.ellipse(px, py, 5 + Math.random() * 5, 3 + Math.random() * 3, Math.random() * Math.PI, 0, Math.PI * 2);
+        x.fill();
+      }
+
+      // 9. SUBTLE ELEGANT TITLE (Harmonious integration)
+      x.save();
+      x.font = 'italic 80px Georgia, serif';
+      x.textAlign = 'center';
+      x.fillStyle = 'rgba(255, 237, 213, 0.18)';
+      x.fillText('Atardecer del Amor', TW * 0.5, TH * 0.94);
+      x.restore();
+
+      return c;
+    }
+
+    // ═══════════════ TABS & SHAPES ═══════════════
+    const hT = Array.from({ length: COLS - 1 }, () => Array.from({ length: ROWS }, () => Math.random() > .5 ? 1 : -1));
+    const vT = Array.from({ length: COLS }, () => Array.from({ length: ROWS - 1 }, () => Math.random() > .5 ? 1 : -1));
+    function getTabs(c, r) { return { bottom: r > 0 ? -vT[c][r - 1] : 0, right: c < COLS - 1 ? hT[c][r] : 0, top: r < ROWS - 1 ? vT[c][r] : 0, left: c > 0 ? -hT[c - 1][r] : 0 } }
+
+    function jE(s, x1, y1, x2, y2, t) {
+      if (!t) { s.lineTo(x2, y2); return }
+      const dx = x2 - x1, dy = y2 - y1, l = Math.sqrt(dx * dx + dy * dy), nx = dy / l * t, ny = -dx / l * t;
+      const p = (u, v) => ({ x: x1 + dx * u + nx * l * v, y: y1 + dy * u + ny * l * v });
+      let a = p(.36, 0); s.lineTo(a.x, a.y);
+      let c1 = p(.36, .05), c2 = p(.30, .14), e = p(.36, .21); s.bezierCurveTo(c1.x, c1.y, c2.x, c2.y, e.x, e.y);
+      c1 = p(.41, .28); c2 = p(.59, .28); e = p(.64, .21); s.bezierCurveTo(c1.x, c1.y, c2.x, c2.y, e.x, e.y);
+      c1 = p(.70, .14); c2 = p(.64, .05); e = p(.64, 0); s.bezierCurveTo(c1.x, c1.y, c2.x, c2.y, e.x, e.y); s.lineTo(x2, y2)
+    }
+
+    function mkShape(c, r) {
+      const hw = PW / 2, hh = PH / 2, tb = getTabs(c, r), s = new THREE.Shape();
+      s.moveTo(-hw, -hh); jE(s, -hw, -hh, hw, -hh, tb.bottom); jE(s, hw, -hh, hw, hh, tb.right);
+      jE(s, hw, hh, -hw, hh, tb.top); jE(s, -hw, hh, -hw, -hh, tb.left); return s
+    }
+
+    function fixUV(geo, c, r) {
+      const p = geo.getAttribute('position'), u = geo.getAttribute('uv'), n = geo.getAttribute('normal');
+      for (let i = 0; i < p.count; i++)if (Math.abs(n.getZ(i)) > .5) u.setXY(i, (p.getX(i) / PW + .5) / COLS + c / COLS, (p.getY(i) / PH + .5) / ROWS + r / ROWS);
+      u.needsUpdate = true
+    }
+
+    // ═══════════════ CREATE PIECES ═══════════════
+    const img = genImage();
+    const tex = new THREE.CanvasTexture(img);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.minFilter = THREE.LinearFilter;
+    const rc = document.getElementById('refCvs'); rc.width = isMobile ? 220 : 330; rc.height = isMobile ? 176 : 264;
+    rc.getContext('2d').drawImage(img, 0, 0, rc.width, rc.height);
+    const extO = { depth: DEPTH, bevelEnabled: false, curveSegments: 6, steps: 1 };
+
+    async function createPieces() {
+      const bar = document.getElementById('loadBar'), stat = document.getElementById('loadStatus'); let n = 0;
+      for (let r = 0; r < ROWS; r++)for (let c = 0; c < COLS; c++) {
+        const geo = new THREE.ExtrudeGeometry(mkShape(c, r), extO); fixUV(geo, c, r);
+
+        // Natural PBR material preserving pure original texture colors
+        const mat = new THREE.MeshStandardMaterial({
+          map: tex,
+          roughness: 0.32,
+          metalness: 0.02,
+          side: THREE.DoubleSide
+        });
+
+        const m = new THREE.Mesh(geo, mat);
+        const tx = (c - (COLS - 1) / 2) * PW, ty = (r - (ROWS - 1) / 2) * PH;
+        m.userData = {
+          col: c, row: r, tx, ty, placed: false, isEdge: c === 0 || c === COLS - 1 || r === 0 || r === ROWS - 1,
+          isCorner: (c === 0 || c === COLS - 1) && (r === 0 || r === ROWS - 1)
+        };
+        const ang = Math.random() * Math.PI * 2, d = PZW * .5 + Math.random() * PZW * .6;
+        m.position.set(Math.cos(ang) * d, Math.sin(ang) * d, 0);
+        m.rotation.z = [0, Math.PI / 2, Math.PI, Math.PI * 1.5][Math.random() * 4 | 0];
+        scene.add(m); pieces.push(m); n++;
+        if (n % 10 === 0) {
+          bar.style.width = (n / TOTAL * 100) + '%'; stat.textContent = `Creando pieza ${n} de ${TOTAL}... 💕`;
+          await new Promise(r2 => setTimeout(r2, 0))
+        }
+      }
+      bar.style.width = '100%'; stat.textContent = '¡Todo listo! 💖';
+      setTimeout(() => {
+        document.getElementById('loading').classList.add('hidden'); t0 = Date.now();
+        if (isMobile) showToast('Toca una pieza · Arrastra · Doble toque = Rotar', 4000)
+      }, 500)
+    }
+
+    // ═══════════════ CELEBRATION PARTICLES ═══════════════
+    const CB_H = 300, CB_S = 450, CB_P = 200;
+    let cbhPts, cbsPts, cbpPts;
+    const cbhPos = new Float32Array(CB_H * 3), cbhCol = new Float32Array(CB_H * 3), cbhD = [];
+    const cbsPos = new Float32Array(CB_S * 3), cbsCol = new Float32Array(CB_S * 3), cbsD = [];
+    const cbpPos = new Float32Array(CB_P * 3), cbpCol = new Float32Array(CB_P * 3), cbpD = [];
+
+    function initCeleb() {
+      for (let i = 0; i < CB_H; i++) {
+        const th = Math.random() * Math.PI * 2, ph = Math.acos(2 * Math.random() - 1), sp = 10 + Math.random() * 22;
+        cbhPos[i * 3] = 0; cbhPos[i * 3 + 1] = 0; cbhPos[i * 3 + 2] = -200;
+        const c = [[1, .45, .25], [.95, .2, .35], [1, .7, .4], [1, .5, .6], [.9, .15, .25]][Math.random() * 5 | 0];
+        cbhCol[i * 3] = c[0]; cbhCol[i * 3 + 1] = c[1]; cbhCol[i * 3 + 2] = c[2];
+        cbhD.push({ vx: Math.sin(ph) * Math.cos(th) * sp, vy: Math.sin(ph) * Math.sin(th) * sp, vz: Math.abs(Math.cos(ph)) * sp * .4 + 3.5, delay: Math.random() * .6, life: 4 + Math.random() * 3 })
+      }
+      for (let i = 0; i < CB_S; i++) {
+        cbsPos[i * 3] = (Math.random() - .5) * PZW * 1.5; cbsPos[i * 3 + 1] = PZH * .6 + Math.random() * 25; cbsPos[i * 3 + 2] = -200;
+        const g2 = .8 + Math.random() * .2; cbsCol[i * 3] = 1; cbsCol[i * 3 + 1] = g2; cbsCol[i * 3 + 2] = .35 + Math.random() * .3;
+        cbsD.push({ vx: (Math.random() - .5) * .8, vy: -3 - Math.random() * 4, vz: (Math.random() - .5) * .4, delay: .5 + Math.random() * 3.5, life: 5 + Math.random() * 4 })
+      }
+      for (let i = 0; i < CB_P; i++) {
+        cbpPos[i * 3] = (Math.random() - .5) * PZW * 2; cbpPos[i * 3 + 1] = PZH * .5 + Math.random() * 20; cbpPos[i * 3 + 2] = -200;
+        const p = [[1, .8, .85], [.95, .45, .6], [1, .6, .7], [.98, .75, .8]][Math.random() * 4 | 0];
+        cbpCol[i * 3] = p[0]; cbpCol[i * 3 + 1] = p[1]; cbpCol[i * 3 + 2] = p[2];
+        cbpD.push({ vx: (Math.random() - .5) * 1.5, vy: -1 - Math.random() * 2, vz: (Math.random() - .5) * .3, sway: Math.random() * Math.PI * 2, swSpd: 1 + Math.random() * 2, delay: .3 + Math.random() * 2, life: 7 + Math.random() * 5 })
+      }
+      function mkPts(pos, col, sz, op) {
+        const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+        g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+        return new THREE.Points(g, new THREE.PointsMaterial({ size: sz, vertexColors: true, transparent: true, opacity: op, blending: THREE.AdditiveBlending, depthWrite: false }))
+      }
+      cbhPts = mkPts(cbhPos, cbhCol, .65, .95); cbsPts = mkPts(cbsPos, cbsCol, .3, .9); cbpPts = mkPts(cbpPos, cbpCol, .5, .85);
+      [cbhPts, cbsPts, cbpPts].forEach(p => { p.visible = false; scene.add(p) })
+    }
+    initCeleb();
+
+    function startCeleb() {
+      celebActive = true; celebT0 = performance.now() / 1000; camStartPos.copy(cam.position); ctrl.enabled = false;
+      for (let i = 0; i < CB_H; i++) { cbhPos[i * 3] = 0; cbhPos[i * 3 + 1] = 0; cbhPos[i * 3 + 2] = 1 }
+      cbhPts.geometry.attributes.position.needsUpdate = true; cbhPts.visible = true; cbsPts.visible = true; cbpPts.visible = true;
+
+      // Show 3D Heart Mesh in center
+      heart3DMesh.visible = true;
+      heart3DMesh.position.set(0, 0, 4);
+
+      // Board illumination
+      glowCtx.fillStyle = 'rgba(251,146,60,.3)'; glowCtx.fillRect(0, 0, GW, GH); glowTex.needsUpdate = true;
+      ambLight.intensity = 1.35;
+      playWinRomanticMusic();
+      triggerHaptic();
+      setTimeout(showWinScreen, 3800);
+    }
+
+    function updateCeleb(el, dt) {
+      const ct = Math.min(el / 3, 1), ease = 1 - Math.pow(1 - ct, 3);
+      cam.position.lerpVectors(camStartPos, new THREE.Vector3(3.5 * Math.sin(el * .2), -2, isMobile ? 48 : 42), ease); cam.lookAt(0, 0, 0);
+
+      // 3D Romantic Heart Animation in scene
+      if (heart3DMesh.visible) {
+        const heartScale = Math.min(el * 0.85, 1.35) * (1 + Math.sin(el * 3.5) * 0.08);
+        heart3DMesh.scale.set(heartScale, heartScale, heartScale);
+        heart3DMesh.rotation.z = Math.sin(el * 1.5) * 0.15;
+        heart3DMesh.rotation.y = Math.sin(el * 2) * 0.35;
+        heart3DMat.opacity = Math.min(el * 0.5, 0.9);
+      }
+
+      // Piece wave illumination
+      if (el > .2 && el < 5.5) {
+        const wf = (el - .2) * 12;
+        pieces.forEach(p => {
+          if (!p.userData.placed) return; const d = Math.sqrt(p.userData.tx ** 2 + p.userData.ty ** 2), w = (wf - d) / 6;
+          if (w > 0 && w < 1) { const i = Math.sin(w * Math.PI); p.material.emissive.setRGB(i * .35, i * .15, i * .08); p.material.emissiveIntensity = 1 + i }
+          else if (w >= 1 && w < 2) { const f = 1 - (w - 1); p.material.emissive.setRGB(f * .1, f * .03, f * .01) }
+          else p.material.emissive.setHex(0)
+        })
+      }
+      for (let i = 0; i < CB_H; i++) {
+        const d = cbhD[i]; if (el < d.delay) { cbhPos[i * 3 + 2] = -200; continue }
+        if (el - d.delay > d.life) { cbhPos[i * 3 + 2] = -200; continue }
+        cbhPos[i * 3] += d.vx * dt; cbhPos[i * 3 + 1] += d.vy * dt; cbhPos[i * 3 + 2] += d.vz * dt; d.vx *= .98; d.vy *= .98; d.vz -= dt * 1.5; d.vy += dt * .4
+      }
+      cbhPts.geometry.attributes.position.needsUpdate = true; cbhPts.material.opacity = Math.max(0, 1 - Math.max(0, el - 3) / 3.5);
+      for (let i = 0; i < CB_S; i++) {
+        const d = cbsD[i]; if (el < d.delay) { cbsPos[i * 3 + 2] = -200; continue }
+        if (el - d.delay > d.life) { cbsPos[i * 3 + 2] = -200; continue }
+        cbsPos[i * 3] += d.vx * dt; cbsPos[i * 3 + 1] += d.vy * dt; cbsPos[i * 3 + 2] += d.vz * dt; d.vx += (Math.random() - .5) * .08
+      }
+      cbsPts.geometry.attributes.position.needsUpdate = true; cbsPts.material.opacity = Math.max(0, 1 - Math.max(0, el - 5) / 3);
+      for (let i = 0; i < CB_P; i++) {
+        const d = cbpD[i]; if (el < d.delay) { cbpPos[i * 3 + 2] = -200; continue }
+        if (el - d.delay > d.life) { cbpPos[i * 3 + 2] = -200; continue }
+        cbpPos[i * 3] += (d.vx + Math.sin((el - d.delay) * d.swSpd + d.sway) * .5) * dt; cbpPos[i * 3 + 1] += d.vy * dt; cbpPos[i * 3 + 2] += d.vz * dt
+      }
+      cbpPts.geometry.attributes.position.needsUpdate = true; cbpPts.material.opacity = Math.max(0, 1 - Math.max(0, el - 6) / 3.5);
+      orbitL1.intensity = 2.8 + Math.sin(el * 4) * 1.2; orbitL2.intensity = 2.2 + Math.cos(el * 3.5) * 1.0
+    }
+
+    function showWinScreen() {
+      const win = document.getElementById('win');
+
+      // —— Aurora background bands ——
+      const aurora = document.getElementById('winAurora');
+      const aurColors = [
+        'linear-gradient(90deg,rgba(244,114,182,.0),rgba(251,113,133,.7),rgba(244,114,182,.0))',
+        'linear-gradient(90deg,rgba(253,186,116,.0),rgba(251,146,60,.6),rgba(253,186,116,.0))',
+        'linear-gradient(90deg,rgba(167,139,250,.0),rgba(196,181,253,.5),rgba(167,139,250,.0))',
+        'linear-gradient(90deg,rgba(253,164,175,.0),rgba(251,207,232,.55),rgba(253,164,175,.0))'
+      ];
+      aurColors.forEach((bg, i) => {
+        const b = document.createElement('div'); b.className = 'aurora-band';
+        b.style.cssText = `background:${bg};top:${15 + i * 22}%;animation-duration:${5 + i * 2.5}s;animation-delay:${i * .8}s`;
+        aurora.appendChild(b);
+      });
+
+      // —— Floating emojis ——
+      const emojis = ['💕', '💖', '🌅', '💗', '💝', '💘', '❤️', '🌹', '✨', '💫', '🌸', '💐', '🥀', '🫶', '❣️', '💓',
+        '🩷', '💟', '🎀', '🌺', '🦋', '💞', '💌', '🫀', '🌷', '🌟', '🍓'];
+      for (let i = 0; i < 55; i++) {
+        const el = document.createElement('div'); el.className = 'float-emoji';
+        el.textContent = emojis[Math.random() * emojis.length | 0]; el.style.left = Math.random() * 100 + '%';
+        el.style.animationDelay = Math.random() * 10 + 's'; el.style.animationDuration = (5 + Math.random() * 8) + 's';
+        el.style.fontSize = (1 + Math.random() * 2.5) + 'em'; win.appendChild(el);
+      }
+
+      // —— Sparkle rings ——
+      for (let i = 0; i < 5; i++) {
+        const ring = document.createElement('div'); ring.className = 'sparkle-ring';
+        ring.style.cssText = `animation-delay:${i * .9}s;border-color:rgba(${i % 2 === 0 ? '254,164,200' : '253,224,71'},.45);border-width:${1 + i * .5}px`;
+        win.querySelector('.win-bg').appendChild(ring);
+      }
+
+      // —— Time display ——
+      const s = Math.floor((Date.now() - t0) / 1000);
+      document.getElementById('winTime').textContent = `⏱ Tiempo: ${s / 60 | 0} min ${s % 60} seg`;
+
+      // —— Geraldine name letter-by-letter glow ——
+      const nameEl = document.getElementById('winName');
+      const nameStr = 'Geraldine';
+      nameStr.split('').forEach((ch, i) => {
+        const sp = document.createElement('span');
+        sp.textContent = ch;
+        sp.style.animationDelay = `${.9 + i * .11}s`;
+        nameEl.appendChild(sp);
+      });
+
+      // —— Cycling love messages for Geraldine ——
+      const loveMessages = [
+        'Geraldine, eres la pieza que faltaba en mi vida 💕',
+        'Te amo más de lo que las palabras pueden decir, mi amor 🌹',
+        'Cada día contigo es el más hermoso de mi vida ✨',
+        'Eres mi atardecer favorito, mi cielo, mi todo 🌅',
+        'Geraldine, sin ti mi mundo no tiene colores 💖',
+        'Eres la razón de mis sonrisas más sinceras 🌸',
+        'Mi corazón late solo para ti, Geraldine ❤️',
+        'Contigo, hasta el tiempo se detiene de lo bonito que es 💫',
+        'Eres mi mayor tesoro y el amor de mi vida 💝',
+        'Gracias por existir y por ser tan perfecta para mí 🫶',
+        'Te amaré hoy, mañana y siempre, Geraldine 💞',
+        'Eres mi paz, mi alegría y mi hogar 🏡💕'
+      ];
+      let msgIdx = 0;
+      const msgEl = document.getElementById('loveMsg');
+      function showNextMsg() {
+        msgEl.style.opacity = '0';
+        msgEl.style.transform = 'translateY(15px)';
+        setTimeout(() => {
+          msgEl.textContent = loveMessages[msgIdx];
+          msgEl.style.transition = 'opacity .7s ease, transform .7s ease';
+          msgEl.style.opacity = '1';
+          msgEl.style.transform = 'translateY(0)';
+          msgIdx = (msgIdx + 1) % loveMessages.length;
+        }, 400);
+      }
+      setTimeout(() => {
+        showNextMsg();
+        setInterval(showNextMsg, 3800);
+      }, 2200);
+
+      win.classList.add('visible');
+    }
+
+    // ═══════════════ INTERACTION ═══════════════
+    function updMouse(e) { mouse.x = (e.clientX / innerWidth) * 2 - 1; mouse.y = -(e.clientY / innerHeight) * 2 + 1 }
+
+    function onDown(e) {
+      if (e.button !== 0 || !t0 || celebActive) return;
+      getAudio();
+      const now = Date.now(); const dblTap = now - lastTap < 340; lastTap = now;
+      downPos = { x: e.clientX, y: e.clientY }; updMouse(e); ray.setFromCamera(mouse, cam);
+      if (dblTap && sel && !sel.userData.placed) {
+        e.stopImmediatePropagation(); sel.rotation.z += Math.PI / 2; checkSnap(sel);
+        if (isMobile) showToast('Pieza rotada 🔄', 800); return
+      }
+      const hits = ray.intersectObjects(pieces.filter(p => !p.userData.placed));
+      if (hits.length > 0) {
+        e.stopImmediatePropagation();
+        pendingPiece = hits[0].object;
+        selectPiece(pendingPiece);
+        // No iniciar arrastre todavía — esperamos el umbral de movimiento
+        ctrl.enabled = false;
+      }
+    }
+
+    function onMove(e) {
+      if (!t0 || celebActive) return;
+
+      // ── Confirmar inicio de arrastre si el dedo se movió lo suficiente ──
+      if (pendingPiece && !dragging && downPos) {
+        const mdx = e.clientX - downPos.x, mdy = e.clientY - downPos.y;
+        if (Math.sqrt(mdx * mdx + mdy * mdy) >= DRAG_THRESHOLD) {
+          dragging = true;
+          sel = pendingPiece;
+          sel.position.z = .45;
+          dragPlane.set(new THREE.Vector3(0, 0, 1), -.45);
+          updMouse(e); ray.setFromCamera(mouse, cam);
+          const pt0 = new THREE.Vector3();
+          ray.ray.intersectPlane(dragPlane, pt0);
+          dragOff.subVectors(sel.position, pt0);
+          cvs.style.cursor = 'grabbing';
+        }
+        return;
+      }
+
+      if (!dragging || !sel) return;
+      e.stopImmediatePropagation(); updMouse(e); ray.setFromCamera(mouse, cam);
+      const pt = new THREE.Vector3();
+      if (ray.ray.intersectPlane(dragPlane, pt)) {
+        // Interpolación suave para movimiento menos brusco en pantalla
+        const tx = pt.x + dragOff.x, ty = pt.y + dragOff.y;
+        sel.position.x += (tx - sel.position.x) * (isMobile ? 0.55 : 0.75);
+        sel.position.y += (ty - sel.position.y) * (isMobile ? 0.55 : 0.75);
+        // Proximity guidance
+        const dx = sel.position.x - sel.userData.tx, dy = sel.position.y - sel.userData.ty;
+        const dist = Math.sqrt(dx * dx + dy * dy), proxR = SNAP_D * 4.5;
+        if (dist < proxR) {
+          const inten = 1 - dist / proxR;
+          sel.material.emissive.setRGB(.25 * inten, .12 * inten, .04 * inten);
+          sel.material.emissiveIntensity = 1 + inten;
+          proxLight.position.set(sel.userData.tx, sel.userData.ty, 1.5); proxLight.intensity = inten * 3.0;
+        } else { sel.material.emissive.setHex(0x221528); sel.material.emissiveIntensity = 1; proxLight.intensity = 0 }
+      }
+    }
+
+    function onUp(e) {
+      if (e.button === 0 && dragging && sel) {
+        e.stopImmediatePropagation(); sel.position.z = 0; proxLight.intensity = 0;
+        checkSnap(sel); dragging = false; ctrl.enabled = true; cvs.style.cursor = 'default';
+        pendingPiece = null;
+      }
+      else if (e.button === 0 && downPos) {
+        const dx = e.clientX - downPos.x, dy = e.clientY - downPos.y;
+        if (Math.sqrt(dx * dx + dy * dy) < DRAG_THRESHOLD) {
+          // Tap simple sin arrastre — solo deseleccionar si no hay pieza pendiente
+          if (!pendingPiece) deselectPiece();
+        }
+        // Si había pieza pendiente y no se arrastró, se queda seleccionada
+        ctrl.enabled = true;
+        pendingPiece = null;
+      }
+      downPos = null;
+    }
+
+    function onCtx(e) {
+      if (!t0 || celebActive) return;
+      if (!sel) {
+        updMouse(e); ray.setFromCamera(mouse, cam); const h = ray.intersectObjects(pieces.filter(p => !p.userData.placed));
+        if (h.length) selectPiece(h[0].object)
+      }
+      if (sel && !sel.userData.placed) { sel.rotation.z += Math.PI / 2; checkSnap(sel) }
+    }
+
+    function onKey(e) {
+      if (!t0 || celebActive) return;
+      if (sel && !sel.userData.placed) {
+        if (e.key === 'r' || e.key === 'R') { sel.rotation.z += Math.PI / 2; checkSnap(sel) }
+        if (e.key === 'e' || e.key === 'E') { sel.rotation.z -= Math.PI / 2; checkSnap(sel) }
+      }
+      if (e.key === 'Escape') deselectPiece()
+    }
+
+    function selectPiece(p) { if (sel && sel !== p) deselectPiece(); sel = p; sel.material.emissive.setHex(0x331c38); sel.material.emissiveIntensity = 1.2 }
+    function deselectPiece() {
+      if (sel && !sel.userData.placed) {
+        sel.material.emissive.setHex(0); sel.material.emissiveIntensity = 0;
+        if (edgeHL && sel.userData.isEdge) sel.material.emissive.setHex(sel.userData.isCorner ? 0x4a1820 : 0x2a2205)
+      } sel = null
+    }
+
+    // ── Romantic snap effect (all layers) ──
+    function romanticSnap(p) {
+      const px = p.userData.tx, py = p.userData.ty;
+      const prog = placedN / TOTAL;  // 0→1 as puzzle fills
+      const intensity = 0.6 + prog * 1.4;
+
+      // iPhone 17 Pro has A19 Pro GPU — use full desktop-quality effects.
+      // Only reduce on lower-end mobile.
+      const mobScale = isHighEndApple ? 1.0 : (isMobile ? 0.45 : 1.0);
+
+      // 1. Board glow + love wave
+      addBoardGlow(p.userData.col, p.userData.row);
+      addLoveWave(px, py, intensity);
+
+      // 2. Spiral particle fountain (full quality on iPhone 17 Pro)
+      const partCount = Math.round((18 + prog * 50) * mobScale);
+      emitSnap(px, py, partCount, true);
+      setTimeout(() => emitSnap(px, py, Math.round((10 + prog * 24) * mobScale), false), 90);
+
+      // 3. Expanding romantic rings
+      emitSnapRing(px, py, intensity);
+      setTimeout(() => emitSnapRing(px, py, intensity * .7), 130);
+      if (prog > .2) setTimeout(() => emitSnapRing(px, py, intensity * .48), 280);
+      if (isHighEndApple && prog > .5) setTimeout(() => emitSnapRing(px, py, intensity * .3), 420);
+
+      // 4. Mini 3D heart burst (full on iPhone 17 Pro)
+      const heartCount = Math.round((1 + prog * 7) * mobScale);
+      emitMiniHearts(px, py, Math.max(1, heartCount));
+
+      // 5. HTML love-word pop (project 3D → screen)
+      const v = new THREE.Vector3(px, py, .5);
+      v.project(cam);
+      const sx = (v.x * .5 + .5) * innerWidth;
+      const sy = (1 - (v.y * .5 + .5)) * innerHeight;
+      // Only show if piece is on screen
+      if (sx > 0 && sx < innerWidth && sy > 0 && sy < innerHeight) {
+        const freeSlot = loveWordPool.find(s => s.free);
+        if (freeSlot) {
+          const el = freeSlot.el;
+          freeSlot.free = false;
+          el.textContent = LOVE_WORDS[Math.floor(Math.random() * LOVE_WORDS.length)];
+          const hue = Math.random() * 60;
+          // iPhone 17 Pro: larger, punchier text on the big 6.3" OLED
+          const fs = isHighEndApple
+            ? (1.3 + prog * .7 + Math.random() * .4).toFixed(2)
+            : isMobile
+              ? (1.1 + prog * .5 + Math.random() * .3).toFixed(2)
+              : (0.9 + prog * .8 + Math.random() * .5).toFixed(2);
+          el.style.left = sx + 'px';
+          el.style.top = (sy - 14) + 'px';
+          el.style.fontSize = fs + 'em';
+          el.style.color = `hsl(${340 + hue},100%,80%)`;
+          el.style.textShadow = `0 0 20px hsl(${340 + hue},100%,65%),0 2px 10px rgba(0,0,0,.6)`;
+          el.classList.remove('snap-pop');
+          void el.offsetWidth;
+          el.classList.add('snap-pop');
+          setTimeout(() => { el.classList.remove('snap-pop'); freeSlot.free = true; }, 1600);
+        }
+      }
+
+      // 6. DOM burst circle
+      const burst = document.createElement('div');
+      burst.className = 'snap-burst';
+      const bSize = isMobile
+        ? Math.round(44 + prog * 70)
+        : Math.round(60 + prog * 120);
+      burst.style.left = sx + 'px';
+      burst.style.top = sy + 'px';
+      burst.style.width = bSize + 'px';
+      burst.style.height = bSize + 'px';
+      burst.style.background = 'radial-gradient(circle,rgba(251,113,133,.6) 0%,rgba(244,114,182,.3) 40%,transparent 70%)';
+      document.body.appendChild(burst);
+      setTimeout(() => burst.remove(), 750);
+
+      // 7. Piece emissive pulse
+      p.material.emissive.setRGB(.55, .22, .35); p.material.emissiveIntensity = 2.5;
+      setTimeout(() => { if (p.userData.placed) { p.material.emissive.setRGB(.25, .1, .04); p.material.emissiveIntensity = 1.2 } }, 200);
+      setTimeout(() => { if (p.userData.placed) { p.material.emissive.setHex(0); p.material.emissiveIntensity = 0 } }, 600);
+
+      // 8. Camera micro-bump — enabled on iPhone 17 Pro (stable gyro/display)
+      if (!dragging && (!isMobile || isHighEndApple)) {
+        const camOrig = cam.position.clone();
+        // Slightly gentler on phone to avoid motion sickness
+        const bumpAmt = isHighEndApple ? (0.05 + prog * .08) : (0.08 + prog * .12);
+        cam.position.x += (Math.random() - .5) * bumpAmt;
+        cam.position.y += (Math.random() - .5) * bumpAmt;
+        setTimeout(() => { cam.position.lerp(camOrig, .75) }, 55);
+        setTimeout(() => { cam.position.lerp(camOrig, .97) }, 110);
+      }
+
+      // 9. Milestone toasts — every 25 pieces on iPhone
+      if (placedN % 100 === 0 && placedN < TOTAL)
+        showToast(`💕 ¡${placedN} piezas! ¡Sigue así, Geraldine! 🌹`, 2200);
+      else if (placedN % 25 === 0 && placedN < TOTAL)
+        showToast(`✨ ${placedN} piezas con amor 💖`, 1400);
+
+      // 10. Sound + haptic + flash
+      playSnapSound();
+      triggerHaptic();
+      screenFlash();
+    }
+
+    function checkSnap(p) {
+      const dx = p.position.x - p.userData.tx, dy = p.position.y - p.userData.ty;
+      let rot = p.rotation.z % (Math.PI * 2); if (rot < 0) rot += Math.PI * 2;
+      if (Math.sqrt(dx * dx + dy * dy) < SNAP_D && (rot < SNAP_A || rot > Math.PI * 2 - SNAP_A)) {
+        p.position.set(p.userData.tx, p.userData.ty, 0); p.rotation.z = 0; p.userData.placed = true; placedN++;
+        romanticSnap(p);
+        sel = null; proxLight.intensity = 0; updHUD();
+        if (placedN === TOTAL) startCeleb();
+      }
+    }
+
+    // ═══════════════ AUTO SOLVE DEMO ═══════════════
+    function runAutoDemo() {
+      if (celebActive) return;
+      getAudio();
+      showToast('¡Completando rompecabezas mágico... ✨!', 2000);
+      let count = 0;
+      const unplaced = pieces.filter(p => !p.userData.placed);
+      const totalToPlace = unplaced.length;
+
+      const interval = setInterval(() => {
+        if (count >= totalToPlace || unplaced.length === 0) {
+          clearInterval(interval);
+          return;
+        }
+        const p = unplaced[count];
+        p.position.set(p.userData.tx, p.userData.ty, 0);
+        p.rotation.z = 0;
+        p.userData.placed = true;
         placedN++;
-        addBoardGlow(p.userData.col,p.userData.row);
-        p.material.emissive.setHex(0);
-        p.material.emissiveIntensity=0;
+        addBoardGlow(p.userData.col, p.userData.row);
+        if (count % 12 === 0) {
+          emitSnap(p.userData.tx, p.userData.ty, 8);
+        }
+        updHUD();
+        count++;
+        if (placedN === TOTAL) {
+          clearInterval(interval);
+          setTimeout(startCeleb, 200);
+        }
+      }, 10);
+    }
+
+    // ═══════════════ UI ═══════════════
+    function updHUD() {
+      document.getElementById('placed').textContent = placedN;
+      document.getElementById('pct').textContent = (placedN / TOTAL * 100 | 0) + '%'
+    }
+    function updTimer() {
+      if (!t0 || celebActive) return; const s = Math.floor((Date.now() - t0) / 1000);
+      document.getElementById('timer').textContent = `${(s / 60 | 0).toString().padStart(2, '0')}:${(s % 60).toString().padStart(2, '0')}`
+    }
+    function showToast(msg, dur = 2000) {
+      const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
+      clearTimeout(t._tid); t._tid = setTimeout(() => t.classList.remove('show'), dur)
+    }
+
+    // ═══════════════ SAVE / LOAD (localStorage) ═══════════════
+    const SAVE_KEY = 'puzzle3d_save_v1';
+
+    function saveProgress() {
+      const elapsed = t0 ? Math.floor((Date.now() - t0) / 1000) : 0;
+      const state = {
+        placedN,
+        elapsed,
+        pieces: pieces.map(p => ({
+          col: p.userData.col, row: p.userData.row,
+          px: p.position.x, py: p.position.y, pz: p.position.z,
+          rz: p.rotation.z, placed: p.userData.placed
+        })),
+        hT: hT.map(col => col.slice()),
+        vT: vT.map(col => col.slice())
+      };
+      try {
+        localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+        showToast('💾 Progreso guardado ✅', 2000);
+        const btn = document.getElementById('btnSave');
+        btn.textContent = '✅';
+        setTimeout(() => { btn.textContent = '💾' }, 1600);
+      } catch (e) { showToast('⚠️ No se pudo guardar', 2000) }
+    }
+
+    function loadProgress() {
+      try {
+        const raw = localStorage.getItem(SAVE_KEY);
+        if (!raw) return false;
+        const state = JSON.parse(raw);
+        if (!state || !Array.isArray(state.pieces) || state.pieces.length !== TOTAL) return false;
+
+        // Restore elapsed time offset
+        t0 = Date.now() - state.elapsed * 1000;
+        placedN = 0;
+
+        const map = {};
+        state.pieces.forEach(s => { map[s.col + '_' + s.row] = s; });
+
+        pieces.forEach(p => {
+          const s = map[p.userData.col + '_' + p.userData.row];
+          if (!s) return;
+          p.position.set(s.px, s.py, s.pz);
+          p.rotation.z = s.rz;
+          if (s.placed) {
+            p.userData.placed = true;
+            placedN++;
+            addBoardGlow(p.userData.col, p.userData.row);
+            p.material.emissive.setHex(0);
+            p.material.emissiveIntensity = 0;
+          }
+        });
+        updHUD();
+        showToast(`💾 Progreso cargado — ${placedN} piezas 💕`, 2500);
+        return true;
+      } catch (e) { return false; }
+    }
+
+    document.getElementById('btnAudio').onclick = () => {
+      soundEnabled = !soundEnabled;
+      document.getElementById('btnAudio').classList.toggle('active', soundEnabled);
+      document.getElementById('btnAudio').textContent = soundEnabled ? '🎵' : '🔇';
+      showToast(soundEnabled ? 'Sonido activado 🎶' : 'Sonido desactivado 🔇', 1000);
+    };
+    document.getElementById('btnRef').onclick = () => {
+      const el = document.getElementById('ref-panel'), on = el.classList.toggle('visible');
+      document.getElementById('btnRef').classList.toggle('active', on)
+    };
+    document.getElementById('btnEdge').onclick = () => {
+      edgeHL = !edgeHL; document.getElementById('btnEdge').classList.toggle('active', edgeHL);
+      pieces.forEach(p => {
+        if (!p.userData.placed && p !== sel) {
+          if (edgeHL && p.userData.isEdge) p.material.emissive.setHex(p.userData.isCorner ? 0x4a1820 : 0x2a2205);
+          else { p.material.emissive.setHex(0); p.material.emissiveIntensity = 0 }
+        }
+      })
+    };
+    document.getElementById('btnRot').onclick = () => {
+      if (sel && !sel.userData.placed) { sel.rotation.z += Math.PI / 2; checkSnap(sel) }
+      else if (isMobile) showToast('Selecciona una pieza primero', 1200)
+    };
+    document.getElementById('btnMix').onclick = () => {
+      pieces.forEach(p => {
+        if (!p.userData.placed) {
+          const a = Math.random() * Math.PI * 2, d = PZW * .5 + Math.random() * PZW * .6;
+          p.position.set(Math.cos(a) * d, Math.sin(a) * d, 0); p.rotation.z = [0, Math.PI / 2, Math.PI, Math.PI * 1.5][Math.random() * 4 | 0]
+        }
+      })
+    };
+
+    document.getElementById('btnSave').onclick = saveProgress;
+    document.getElementById('btnReplay').onclick = () => { localStorage.removeItem(SAVE_KEY); location.reload(); };
+
+    // ═══════════════ ANIMATION LOOP ═══════════════
+    let lastT = performance.now();
+    function animate() {
+      requestAnimationFrame(animate);
+      const now = performance.now(), dt = Math.min((now - lastT) / 1000, .05), nowS = now / 1000; lastT = now;
+      if (!celebActive) ctrl.update();
+      updTimer();
+
+      // Subtle natural light orbit
+      orbitL1.position.set(Math.cos(nowS * .3) * 28, Math.sin(nowS * .3) * 22, 8 + Math.sin(nowS * .7) * 3);
+      orbitL2.position.set(Math.cos(nowS * .22 + 2.1) * 22, Math.sin(nowS * .22 + 2.1) * 18, 6 + Math.sin(nowS * .5) * 2);
+
+      // Atmospheric hearts
+      const ap = ahGeo.getAttribute('position');
+      for (let i = 0; i < AH; i++) {
+        ap.setY(i, ap.getY(i) + ahVel[i].y); ap.setX(i, ap.getX(i) + ahVel[i].x);
+        if (ap.getY(i) > 100) { ap.setY(i, -100); ap.setX(i, (Math.random() - .5) * 200) }
+      }
+      ap.needsUpdate = true;
+
+      // Fireflies
+      const fp = ffGeo.getAttribute('position');
+      for (let i = 0; i < FF; i++) {
+        const v = ffVel[i], t = nowS * v.sp + v.ph;
+        fp.setX(i, fp.getX(i) + Math.sin(t) * .012 + v.vx * dt);
+        fp.setY(i, fp.getY(i) + Math.cos(t * 1.3) * .012 + v.vy * dt);
+        fp.setZ(i, .5 + Math.sin(t * .7 + i) * 1.5 + 1.5);
+        if (Math.abs(fp.getX(i)) > PZW * 1.2) { v.vx *= -1; fp.setX(i, fp.getX(i) + v.vx * .1) }
+        if (Math.abs(fp.getY(i)) > PZH * 1.2) { v.vy *= -1; fp.setY(i, fp.getY(i) + v.vy * .1) }
+      }
+      fp.needsUpdate = true;
+
+      // Love waves
+      updateWaves(nowS);
+
+      // Snap sparkles
+      let spUpd = false;
+      for (let i = 0; i < SP; i++) {
+        const d = spD[i]; if (d.life > 0) {
+          d.life -= dt;
+          spPos[i * 3] += d.vx * dt; spPos[i * 3 + 1] += d.vy * dt; spPos[i * 3 + 2] += d.vz * dt;
+          d.vy -= dt * 7; d.vx *= .95; d.vy *= .95; d.vz *= .95;
+          // spiral spin effect
+          const ang = d.spin * dt;
+          const cx = spPos[i * 3], cy = spPos[i * 3 + 1];
+          spPos[i * 3] = cx * Math.cos(ang) - cy * Math.sin(ang) * (dt * .1) + cx * (1 - dt * .1);
+          if (d.life <= 0) spPos[i * 3 + 2] = -200; spUpd = true;
+        }
+      }
+      if (spUpd) spGeo.attributes.position.needsUpdate = true;
+
+      // Snap rings animation
+      for (const r of snapRings) {
+        if (r.life <= 0) { r.mesh.visible = false; r.ring2.visible = false; continue; }
+        r.life -= dt;
+        const t = 1 - r.life / r.maxLife; // 0→1
+        const sc = r.maxR * t + .01;
+        r.mesh.scale.set(sc, sc, 1); r.ring2.scale.set(sc * .7, sc * .7, 1);
+        r.mat.opacity = (.85 * (1 - t * t));
+        r.mat2.opacity = (.7 * (1 - t * t));
+        r.mesh.rotation.z += dt * .8; r.ring2.rotation.z -= dt * 1.2;
+        if (r.life <= 0) { r.mesh.visible = false; r.ring2.visible = false; }
+      }
+
+      // Mini hearts animation
+      for (const h of miniHearts) {
+        if (h.life <= 0) { h.mesh.visible = false; continue; }
+        h.life -= dt;
+        h.mesh.position.x += h.vx * dt; h.mesh.position.y += h.vy * dt; h.mesh.position.z += h.vz * dt;
+        h.vy -= dt * 4; h.vx *= .96; h.vz *= .97;
+        h.mesh.rotation.z += h.vrot * dt;
+        h.mat.opacity = Math.max(0, h.life / (h.life + .001)) * .85;
+        if (h.life <= 0) h.mesh.visible = false;
+      }
+
+      // Celebration
+      if (celebActive) updateCeleb(nowS - celebT0, dt);
+
+      Renderer.render(scene, cam)
+    }
+
+    window.addEventListener('resize', () => { cam.aspect = innerWidth / innerHeight; cam.updateProjectionMatrix(); Renderer.setSize(innerWidth, innerHeight) });
+    animate();
+    createpieces().then(() => {
+      // Auto-load saved progress after pieces are created
+      if (!loadProgress()) {
+        // No saved state — fresh game, nothing to do
       }
     });
-    updHUD();
-    showToast(`💾 Progreso cargado — ${placedN} piezas 💕`,2500);
-    return true;
-  }catch(e){return false;}
-}
 
-document.getElementById('btnAudio').onclick=()=>{
-  soundEnabled = !soundEnabled;
-  document.getElementById('btnAudio').classList.toggle('active', soundEnabled);
-  document.getElementById('btnAudio').textContent = soundEnabled ? '🎵' : '🔇';
-  showToast(soundEnabled ? 'Sonido activado 🎶' : 'Sonido desactivado 🔇', 1000);
-};
-document.getElementById('btnRef').onclick=()=>{const el=document.getElementById('ref-panel'),on=el.classList.toggle('visible');
-  document.getElementById('btnRef').classList.toggle('active',on)};
-document.getElementById('btnEdge').onclick=()=>{edgeHL=!edgeHL;document.getElementById('btnEdge').classList.toggle('active',edgeHL);
-  pieces.forEach(p=>{if(!p.userData.placed&&p!==sel){if(edgeHL&&p.userData.isEdge)p.material.emissive.setHex(p.userData.isCorner?0x4a1820:0x2a2205);
-    else{p.material.emissive.setHex(0);p.material.emissiveIntensity=0}}})};
-document.getElementById('btnRot').onclick=()=>{if(sel&&!sel.userData.placed){sel.rotation.z+=Math.PI/2;checkSnap(sel)}
-  else if(isMobile)showToast('Selecciona una pieza primero',1200)};
-document.getElementById('btnMix').onclick=()=>{pieces.forEach(p=>{if(!p.userData.placed){const a=Math.random()*Math.PI*2,d=PZW*.5+Math.random()*PZW*.6;
-  p.position.set(Math.cos(a)*d,Math.sin(a)*d,0);p.rotation.z=[0,Math.PI/2,Math.PI,Math.PI*1.5][Math.random()*4|0]}})};
-
-document.getElementById('btnSave').onclick=saveProgress;
-document.getElementById('btnReplay').onclick=()=>{localStorage.removeItem(SAVE_KEY);location.reload();};
-
-// ═══════════════ ANIMATION LOOP ═══════════════
-let lastT=performance.now();
-function animate(){
-  requestAnimationFrame(animate);
-  const now=performance.now(),dt=Math.min((now-lastT)/1000,.05),nowS=now/1000;lastT=now;
-  if(!celebActive)ctrl.update();
-  updTimer();
-
-  // Subtle natural light orbit
-  orbitL1.position.set(Math.cos(nowS*.3)*28,Math.sin(nowS*.3)*22,8+Math.sin(nowS*.7)*3);
-  orbitL2.position.set(Math.cos(nowS*.22+2.1)*22,Math.sin(nowS*.22+2.1)*18,6+Math.sin(nowS*.5)*2);
-
-  // Atmospheric hearts
-  const ap=ahGeo.getAttribute('position');
-  for(let i=0;i<AH;i++){ap.setY(i,ap.getY(i)+ahVel[i].y);ap.setX(i,ap.getX(i)+ahVel[i].x);
-    if(ap.getY(i)>100){ap.setY(i,-100);ap.setX(i,(Math.random()-.5)*200)}}
-  ap.needsUpdate=true;
-
-  // Fireflies
-  const fp=ffGeo.getAttribute('position');
-  for(let i=0;i<FF;i++){const v=ffVel[i],t=nowS*v.sp+v.ph;
-    fp.setX(i,fp.getX(i)+Math.sin(t)*.012+v.vx*dt);
-    fp.setY(i,fp.getY(i)+Math.cos(t*1.3)*.012+v.vy*dt);
-    fp.setZ(i,.5+Math.sin(t*.7+i)*1.5+1.5);
-    if(Math.abs(fp.getX(i))>PZW*1.2){v.vx*=-1;fp.setX(i,fp.getX(i)+v.vx*.1)}
-    if(Math.abs(fp.getY(i))>PZH*1.2){v.vy*=-1;fp.setY(i,fp.getY(i)+v.vy*.1)}}
-  fp.needsUpdate=true;
-
-  // Love waves
-  updateWaves(nowS);
-
-  // Snap sparkles
-  let spUpd=false;
-  for(let i=0;i<SP;i++){const d=spD[i];if(d.life>0){d.life-=dt;
-    spPos[i*3]+=d.vx*dt;spPos[i*3+1]+=d.vy*dt;spPos[i*3+2]+=d.vz*dt;
-    d.vy-=dt*7;d.vx*=.95;d.vy*=.95;d.vz*=.95;
-    // spiral spin effect
-    const ang=d.spin*dt;
-    const cx=spPos[i*3],cy=spPos[i*3+1];
-    spPos[i*3]=cx*Math.cos(ang)-cy*Math.sin(ang)*(dt*.1)+cx*(1-dt*.1);
-    if(d.life<=0)spPos[i*3+2]=-200;spUpd=true;}}
-  if(spUpd)spGeo.attributes.position.needsUpdate=true;
-
-  // Snap rings animation
-  for(const r of snapRings){
-    if(r.life<=0){r.mesh.visible=false;r.ring2.visible=false;continue;}
-    r.life-=dt;
-    const t=1-r.life/r.maxLife; // 0→1
-    const sc=r.maxR*t+.01;
-    r.mesh.scale.set(sc,sc,1);r.ring2.scale.set(sc*.7,sc*.7,1);
-    r.mat.opacity=(.85*(1-t*t));
-    r.mat2.opacity=(.7*(1-t*t));
-    r.mesh.rotation.z+=dt*.8;r.ring2.rotation.z-=dt*1.2;
-    if(r.life<=0){r.mesh.visible=false;r.ring2.visible=false;}}
-
-  // Mini hearts animation
-  for(const h of miniHearts){
-    if(h.life<=0){h.mesh.visible=false;continue;}
-    h.life-=dt;
-    h.mesh.position.x+=h.vx*dt;h.mesh.position.y+=h.vy*dt;h.mesh.position.z+=h.vz*dt;
-    h.vy-=dt*4;h.vx*=.96;h.vz*=.97;
-    h.mesh.rotation.z+=h.vrot*dt;
-    h.mat.opacity=Math.max(0,h.life/(h.life+.001))*.85;
-    if(h.life<=0)h.mesh.visible=false;}
-
-  // Celebration
-  if(celebActive)updateCeleb(nowS-celebT0,dt);
-
-  Renderer.render(scene,cam)}
-
-window.addEventListener('resize',()=>{cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();Renderer.setSize(innerWidth,innerHeight)});
-animate();
-createpieces().then(()=>{
-  // Auto-load saved progress after pieces are created
-  if(!loadProgress()){
-    // No saved state — fresh game, nothing to do
-  }
-});
-
-async function createpieces(){ await createPieces(); }
-</script>
+    async function createpieces() { await createPieces(); }
+  </script>
 </body>
+
 </html>
